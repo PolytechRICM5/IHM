@@ -6,7 +6,7 @@
 package homefinder;
 
 import java.util.LinkedList;
-import javax.swing.JSlider;
+import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
 /**
@@ -19,6 +19,41 @@ public class RangeSliderModel implements _RangeSliderModel {
     private int extent;
     private boolean minAdj, maxAdj;
     private LinkedList<ChangeListener> listeners;
+    
+    /**
+     * Constructor with default values 0 to 100
+     * with extent 10 and values on min and max
+     */
+    public RangeSliderModel(){
+        this.min = 0;
+        this.max = 100;
+        this.extent = 10;
+        this.valMin = 0;
+        this.valMax = 100;
+        this.minAdj = false;
+        this.maxAdj = false;
+        listeners = new LinkedList<>();
+    }
+    
+    /**
+     * Constructor for the RangeSlider model with range interval and initial values.
+     * 
+     * @param min, the minimal value of the range of the rangeslider
+     * @param max, the maximal value of the range of the rangeslider
+     * @param extent, the step between values of the rangeslider
+     * @param minvalue, the initial value of the lowest value
+     * @param maxvalue, the initial value of the highest value
+     */
+    public RangeSliderModel(int min, int max, int extent, int minvalue, int maxvalue) {
+        this.min = min;
+        this.max = max;
+        this.extent = extent;
+        this.valMin = minvalue;
+        this.valMax = maxvalue;
+        this.minAdj = false;
+        this.maxAdj = false;
+        listeners = new LinkedList<>();
+    }
     
     @Override
     public void addChangeListener(ChangeListener listener) {
@@ -59,52 +94,66 @@ public class RangeSliderModel implements _RangeSliderModel {
     public void setValueMin(int valuemin) {
         if (valuemin >= min && valuemin <= valMax-extent && valuemin%extent == min%extent) {
             this.valMin = valuemin;
+            for (ChangeListener listener : listeners) {
+                listener.stateChanged(new ChangeEvent(this));
+            }
         }
     }
 
     @Override
     public void setValueMax(int valuemax) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        if (valuemax <= max && valuemax >= valMin+extent && valuemax%extent == min%extent) {
+            this.valMin = valuemax;
+            for (ChangeListener listener : listeners) {
+                listener.stateChanged(new ChangeEvent(this));
+            }
+        }
     }
 
     @Override
     public int getExtent() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return this.extent;
     }
 
     @Override
     public int getValueMin() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return this.valMin;
     }
 
     @Override
     public int getValueMax() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return this.valMax;
     }
 
     @Override
     public void setValueMinAdjusting(boolean minadj) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        this.minAdj = minadj;
     }
 
     @Override
     public void setValueMaxAdjusting(boolean maxadj) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        this.maxAdj = maxadj;
     }
 
     @Override
     public boolean getValueMinAdjusting() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return this.minAdj;
     }
 
     @Override
     public boolean getValueMaxAdjusting() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return this.maxAdj;
     }
 
     @Override
     public void setRangeProperties(int valmin, int valmax, int extent, int min, int max, boolean minadj, boolean maxadj) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        this.valMin = valmin;
+        this.valMax = valmax;
+        this.min = min;
+        this.max = max;
+        this.extent = extent;
+        this.minAdj = minadj;
+        this.maxAdj = maxadj;
     }
     
    
