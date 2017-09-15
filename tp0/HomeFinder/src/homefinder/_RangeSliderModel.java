@@ -11,7 +11,7 @@ import javax.swing.event.ChangeListener;
  *
  * @author alicia
  */
-public interface _RangeSlider {
+public interface _RangeSliderModel {
     
     public void addChangeListener(ChangeListener listener);
     public void removeChangeListener(ChangeListener listener);
