@@ -51,7 +51,7 @@ public class RangeSliderModel implements _RangeSliderModel {
     }
     
     @Override
-    public void addChangeListener(ChangeListener listener) {
+    public void addListener(ChangeListener listener) {
         if(!listeners.contains(listener)) {
             listeners.add(listener);
         }
