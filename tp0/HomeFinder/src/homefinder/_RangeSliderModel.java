@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package homefinder;
 
 import javax.swing.event.ChangeListener;
@@ -13,8 +8,8 @@ import javax.swing.event.ChangeListener;
  */
 public interface _RangeSliderModel {
     
-    public void addChangeListener(ChangeListener listener);
-    public void removeChangeListener(ChangeListener listener);
+    public void addListener(ChangeListener listener);
+    public void removeListener(ChangeListener listener);
     
     public void setMaximum(int max);
     public void setMinimum(int min);
