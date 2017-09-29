@@ -15,7 +15,43 @@ public class RangeSliderModel implements _RangeSliderModel {
     private boolean minAdj, maxAdj;
     private LinkedList<ChangeListener> listeners;
     
-    public void addListener(ChangeListener listener) {
+    /**
+     * Constructor with default values 0 to 100
+     * with extent 10 and values on min and max
+     */
+    public RangeSliderModel(){
+        this.min = 0;
+        this.max = 100;
+        this.extent = 10;
+        this.valMin = 0;
+        this.valMax = 100;
+        this.minAdj = false;
+        this.maxAdj = false;
+        listeners = new LinkedList<>();
+    }
+    
+    /**
+     * Constructor for the RangeSlider model with range interval and initial values.
+     * 
+     * @param min, the minimal value of the range of the rangeslider
+     * @param max, the maximal value of the range of the rangeslider
+     * @param extent, the step between values of the rangeslider
+     * @param minvalue, the initial value of the lowest value
+     * @param maxvalue, the initial value of the highest value
+     */
+    public RangeSliderModel(int min, int max, int extent, int minvalue, int maxvalue) {
+        this.min = min;
+        this.max = max;
+        this.extent = extent;
+        this.valMin = minvalue;
+        this.valMax = maxvalue;
+        this.minAdj = false;
+        this.maxAdj = false;
+        listeners = new LinkedList<>();
+    }
+    
+    @Override
+    public void addChangeListener(ChangeListener listener) {
         if(!listeners.contains(listener)) {
             listeners.add(listener);
         }
@@ -87,7 +123,7 @@ public class RangeSliderModel implements _RangeSliderModel {
             for (ChangeListener listener : listeners) {
                 listener.stateChanged(new ChangeEvent(this));
             }
-        }    
+        } 
     }
 
     @Override
