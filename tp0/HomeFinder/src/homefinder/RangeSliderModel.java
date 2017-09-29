@@ -8,7 +8,7 @@ import javax.swing.event.ChangeListener;
  *
  * @author alicia
  */
-public class RangeSliderModel implements _RangeSliderModel {
+public class RangeSliderModel  implements _RangeSliderModel {
 
     private int min, max, valMin, valMax;
     private int extent;
@@ -51,7 +51,7 @@ public class RangeSliderModel implements _RangeSliderModel {
     }
     
     @Override
-    public void addChangeListener(ChangeListener listener) {
+    public void addListener(ChangeListener listener) {
         if(!listeners.contains(listener)) {
             listeners.add(listener);
         }
