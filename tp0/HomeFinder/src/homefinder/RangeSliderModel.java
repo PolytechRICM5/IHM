@@ -8,7 +8,7 @@ import javax.swing.event.ChangeListener;
  *
  * @author alicia
  */
-public class RangeSliderModel implements _RangeSliderModel {
+public class RangeSliderModel  implements _RangeSliderModel {
 
     private int min, max, valMin, valMax;
     private int extent;
