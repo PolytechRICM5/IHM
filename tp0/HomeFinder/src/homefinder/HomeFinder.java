@@ -11,12 +11,22 @@ import javax.swing.JFrame;
  *
  * @author alicia
  */
-public class HomeFinder {
+public class HomeFinder 
+{
 
+    public static   minX = 0,
+                    maxX = 100,
+                    minY = 0,
+                    maxY = 100,
+                    minRooms = 2,
+                    maxRooms = 8,
+                    
+    
     /**
      * @param args the command line arguments
      */
-    public static void main(String[] args) {
+    public static void main(String[] args) 
+    {
         
         JFrame w = new JFrame();
         RangeSlider rs = new RangeSlider(0, 100, 50, 60, 10);
