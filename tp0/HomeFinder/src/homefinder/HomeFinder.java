@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package homefinder;
 
 import javax.swing.JFrame;
@@ -14,12 +9,14 @@ import javax.swing.JFrame;
 public class HomeFinder 
 {
 
-    public static   minX = 0,
-                    maxX = 100,
-                    minY = 0,
-                    maxY = 100,
-                    minRooms = 2,
-                    maxRooms = 8,
+    public static int   minX = 0,
+                        maxX = 100,
+                        minY = 0,
+                        maxY = 100,
+                        minRooms = 2,
+                        maxRooms = 8,
+                        minPrice = 100000,
+                        maxPrice = 500000;
                     
     
     /**
@@ -29,7 +26,7 @@ public class HomeFinder
     {
         
         JFrame w = new JFrame();
-        RangeSlider rs = new RangeSlider(0, 100, 50, 60, 10);
+        RangeSlider rs = new RangeSlider(0, 100, 50, 40);
         rs.setMajorTickSpacing(10);
         rs.setPaintTicks(true);
         w.add(rs);

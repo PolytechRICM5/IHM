@@ -18,18 +18,14 @@ public interface _RangeSliderModel {
     public int getMinimum();
     
     public void setExtent(int extent);
-    public void setValueMin(int valuemin);
-    public void setValueMax(int valuemax);
+    public void setValue(int valuemax);
     
     public int getExtent();
-    public int getValueMin();
-    public int getValueMax();
+    public int getValue();
     
-    public void setValueMinAdjusting(boolean minadj);
-    public void setValueMaxAdjusting(boolean maxadj);
-    public boolean getValueMinAdjusting();
-    public boolean getValueMaxAdjusting();
+    public void setValueIsAdjusting(boolean adj);
+    public boolean getValueIsAdjusting();
     
-    public void setRangeProperties(int valmin, int valmax, int extent, int min, int max, boolean minadj, boolean maxadj);   
+    public void setRangeProperties(int value, int extent, int min, int max, boolean adj);   
     
 }

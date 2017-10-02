@@ -48,9 +48,9 @@ public class RangeSliderUI extends BasicSliderUI {
     
     protected void calculateThumbMaxLocation() {
         if ( slider.getSnapToTicks() ) {
-            int sliderValue = slider.getValueMax();
+            int sliderValue = slider.getMaximum() - slider.getExtent();
             int snappedValue = sliderValue;
-            int tickSpacing = getTickSpacing();
+            int tickSpacing = slider.getTickSpacing();
 
             if ( tickSpacing != 0 ) {
                 // If it's not on a tick, change the value

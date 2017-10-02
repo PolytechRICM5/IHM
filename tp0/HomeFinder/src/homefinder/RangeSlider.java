@@ -10,63 +10,41 @@ public class RangeSlider extends JSlider {
 
     RangeSliderModel model;
     
-    public RangeSlider(int min, int max, int minVal, int maxVal, int extent) {
-        super(min, max, minVal);
-        this.model = new RangeSliderModel(min, max, extent, minVal, maxVal);
+    public RangeSlider(int min, int max, int value, int extent) 
+    {
+        super(min, max, value);
+        this.model = new RangeSliderModel(min, max, value, extent);
         this.model.addListener(changeListener);
         updateUI();
     }
     
     @Override
-    public void setValue(int value) {
-        this.model.setValueMin(value);
-    }
-    
-    public void setValueMin(int valuemin) {
-        setValue(valuemin);
-    }
-    
-    public void setValueMax(int valuemax) {
-        this.model.setValueMax(valuemax);
+    public void setValue(int value) 
+    {
+        this.model.setValue(value);
     }
     
     @Override
-    public int getValue() {
-        return model.getValueMin();
+    public int getValue() 
+    {
+        return model.getValue();
     }
     
-    public int getValueMin() {
-        return this.getValue();
-    }
-    
-    public int getValueMax() {
-        return model.getValueMax();
-    }
-    
-    @Override
-    public void setValueIsAdjusting(boolean b) {
-        this.model.setValueMinAdjusting(b);
-    }
-    
-    public void setValueMinIsAdjusting(boolean adj) {
-        setValueIsAdjusting(adj);
-    }
-    
-    public void setValueMaxIsAdjusting(boolean adj) {
-        this.model.setValueMaxAdjusting(adj);
+    public void setExtent(int extent) 
+    {
+        this.model.setExtent(extent);
     }
     
     @Override
-    public boolean getValueIsAdjusting() {
-        return this.model.getValueMinAdjusting();
+    public void setValueIsAdjusting(boolean b) 
+    {
+        this.model.setValueIsAdjusting(b);
     }
     
-    public boolean getValueMinIsAdjusting() {
-        return getValueIsAdjusting();
-    }
-    
-    public boolean getValueMaxIsAdjusting() {
-        return this.model.getValueMaxAdjusting();
+    @Override
+    public boolean getValueIsAdjusting() 
+    {
+        return this.model.getValueIsAdjusting();
     }
     
 }
