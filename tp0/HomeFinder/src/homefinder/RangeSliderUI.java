@@ -139,11 +139,11 @@ public class RangeSliderUI extends BasicSliderUI {
             g.drawLine(0, h-1, w-1, h-1);
             g.drawLine(w-1, 0, w-1, h-1);
 
-            g.setColor(highlightColor);
+            g.setColor();
             g.drawLine(0, 0, 0, h-2);
             g.drawLine(1, 0, w-2, 0);
 
-            g.setColor(shadowColor);
+            g.setColor(getShadowColor());
             g.drawLine(1, h-2, w-2, h-2);
             g.drawLine(w-2, 1, w-2, h-3);
         }
@@ -156,7 +156,7 @@ public class RangeSliderUI extends BasicSliderUI {
             p.addPoint(w-2, h-1-cw);
             g.fillPolygon(p);
 
-            g.setColor(highlightColor);
+            g.setColor(getHighlightColor());
             g.drawLine(0, 0, w-2, 0);
             g.drawLine(0, 1, 0, h-1-cw);
             g.drawLine(0, h-cw, cw-1, h-1);
@@ -165,7 +165,7 @@ public class RangeSliderUI extends BasicSliderUI {
             g.drawLine(w-1, 0, w-1, h-2-cw);
             g.drawLine(w-1, h-1-cw, w-1-cw, h-1);
 
-            g.setColor(shadowColor);
+            g.setColor(getShadowColor());
             g.drawLine(w-2, 1, w-2, h-2-cw);
             g.drawLine(w-2, h-1-cw, w-1-cw, h-2);
         }
@@ -179,7 +179,7 @@ public class RangeSliderUI extends BasicSliderUI {
                   p.addPoint(w-1-cw, h-2);
                   g.fillPolygon(p);
 
-                  g.setColor(highlightColor);
+                  g.setColor(getHighlightColor());
                   g.drawLine(0, 0, 0, h - 2);                  // left
                   g.drawLine(1, 0, w-1-cw, 0);                 // top
                   g.drawLine(w-cw-1, 0, w-1, cw);              // top slant
@@ -188,7 +188,7 @@ public class RangeSliderUI extends BasicSliderUI {
                   g.drawLine(0, h-1, w-2-cw, h-1);             // bottom
                   g.drawLine(w-1-cw, h-1, w-1, h-1-cw);        // bottom slant
 
-                  g.setColor(shadowColor);
+                  g.setColor(getShadowColor());
                   g.drawLine(1, h-2, w-2-cw,  h-2 );         // bottom
                   g.drawLine(w-1-cw, h-2, w-2, h-cw-1 );     // bottom slant
             }
@@ -200,7 +200,7 @@ public class RangeSliderUI extends BasicSliderUI {
                   p.addPoint(cw, h-2);
                   g.fillPolygon(p);
 
-                  g.setColor(highlightColor);
+                  g.setColor(getHighlightColor());
                   g.drawLine(cw-1, 0, w-2, 0);             // top
                   g.drawLine(0, cw, cw, 0);                // top slant
 
@@ -208,7 +208,7 @@ public class RangeSliderUI extends BasicSliderUI {
                   g.drawLine(0, h-1-cw, cw, h-1 );         // bottom slant
                   g.drawLine(cw, h-1, w-1, h-1);           // bottom
 
-                  g.setColor(shadowColor);
+                  g.setColor(getShadowColor());
                   g.drawLine(cw, h-2, w-2,  h-2 );         // bottom
                   g.drawLine(w-1, 1, w-1,  h-2 );          // right
             }
