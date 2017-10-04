@@ -26,8 +26,8 @@ public class HomeFinder
     {
         
         JFrame w = new JFrame();
-        RangeSlider rs = new RangeSlider(0, 100, 50, 40);
-        rs.setMajorTickSpacing(10);
+        RangeSlider rs = new RangeSlider(100, 200, 120, 140);
+        rs.setMajorTickSpacing(2);
         rs.setPaintTicks(true);
         w.add(rs);
         w.pack();

@@ -10,166 +10,179 @@ import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Polygon;
 import java.awt.Rectangle;
+import java.awt.event.MouseEvent;
+
 import javax.swing.JComponent;
 import javax.swing.JSlider;
-import javax.swing.plaf.basic.BasicGraphicsUtils;
+import javax.swing.SwingUtilities;
+import javax.swing.UIManager;
 import javax.swing.plaf.basic.BasicSliderUI;
+
 
 /**
  *
- * @author alicia
+ * @author Alicia A.
  */
 public class RangeSliderUI extends BasicSliderUI {
 
-    private Rectangle thumbRectMax = null;
-    
-    public RangeSliderUI(RangeSlider rs) {
-        super(rs);
-    }
+	// Rectangle used for the upper thumb
+	private Rectangle thumbRectMax = null;
 
-    @Override
-    public void installUI(JComponent c)   {
-        super.installUI(c); // This figures out where the labels, ticks, track, and thumb are.
-        thumbRectMax = new Rectangle();
-    }
-    
-    @Override
-    public void uninstallUI(JComponent c)   {
-        super.uninstallUI(c); // This figures out where the labels, ticks, track, and thumb are.
-        thumbRectMax = null;
-    }
-    
-    @Override
-    protected void calculateThumbSize() {
-        Dimension size = getThumbSize();
-        thumbRect.setSize( size.width, size.height );
-        thumbRectMax.setSize( size.width, size.height );
-    }
-    
-    protected void calculateThumbMaxLocation() {
-        if ( slider.getSnapToTicks() ) {
-            int sliderValue = slider.getMaximum() - slider.getExtent();
-            int snappedValue = sliderValue;
-            int tickSpacing = slider.getTickSpacing();
+	// Redefining private variables used in the BasiSliderUI that we need
+	private int lastValue;
+	private boolean isDragging;
 
-            if ( tickSpacing != 0 ) {
-                // If it's not on a tick, change the value
-                if ( (sliderValue - slider.getMinimum()) % tickSpacing != 0 ) {
-                    float temp = (float)(sliderValue - slider.getMinimum()) / (float)tickSpacing;
-                    int whichTick = Math.round( temp );
+	public RangeSliderUI(RangeSlider rs) {
+		super(rs);
+	}
 
-                    // This is the fix for the bug #6401380
-                    if (temp - (int)temp == .5 && sliderValue < lastValue) {
-                      whichTick --;
-                    }
-                    snappedValue = slider.getMinimum() + (whichTick * tickSpacing);
-                }
+	@Override
+	public void installUI(JComponent c)   {
+		thumbRectMax = new Rectangle();
+		super.installUI(c); // This figures out where the labels, ticks, track, and thumb are.
+	}
 
-                if( snappedValue != sliderValue ) {
-                    slider.setValue( snappedValue );
-                }
-            }
-        }
+	@Override
+	public void uninstallUI(JComponent c)   {
+		thumbRectMax = null;
+		super.uninstallUI(c); // This figures out where the labels, ticks, track, and thumb are.
+	}
 
-        if ( slider.getOrientation() == JSlider.HORIZONTAL ) {
-            int valuePosition = xPositionForValue(slider.getValue());
+	@Override
+	protected void calculateThumbSize() {
+		super.calculateThumbSize();
+		thumbRectMax.setSize(thumbRect.width, thumbRect.height);
+	}
 
-            thumbRect.x = valuePosition - (thumbRect.width / 2);
-            thumbRect.y = trackRect.y;
-        }
-        else {
-            int valuePosition = yPositionForValue(slider.getValue());
+	protected void calculateThumbLocation() {
+		super.calculateThumbLocation();
 
-            thumbRect.x = trackRect.x;
-            thumbRect.y = valuePosition - (thumbRect.height / 2);
-        }
-    }
-    
-    @Override
-    public void paint(Graphics g, JComponent jc) {
-        recalculateIfInsetsChanged();
-        recalculateIfOrientationChanged();
-        Rectangle clip = g.getClipBounds();
+		if ( slider.getSnapToTicks() ) {
+			int sliderValue = slider.getValue() + slider.getExtent();
+			int snappedValue = sliderValue;
+			int tickSpacing = slider.getMajorTickSpacing();
 
-        if ( !clip.intersects(trackRect) && slider.getPaintTrack())
-            calculateGeometry();
+			if ( tickSpacing != 0 ) {
+				// If it's not on a tick, change the value
+				if ( (sliderValue - slider.getMinimum()) % tickSpacing != 0 ) {
+					float temp = (float)(sliderValue - slider.getMinimum()) / (float)tickSpacing;
+					int whichTick = Math.round( temp );
 
-        if ( slider.getPaintTrack() && clip.intersects( trackRect ) ) {
-            paintTrack( g );
-        }
-        if ( slider.getPaintTicks() && clip.intersects( tickRect ) ) {
-            paintTicks( g );
-        }
-        if ( slider.getPaintLabels() && clip.intersects( labelRect ) ) {
-            paintLabels( g );
-        }
-        if ( slider.hasFocus() && clip.intersects( focusRect ) ) {
-            paintFocus( g );
-        }
-        if ( clip.intersects( thumbRect ) ) {
-            paintThumb( g );
-        }
-        
-    }
-    
-    public void paintThumbMax(Graphics g) {
-        Rectangle knobBounds = thumbRectMax;
-        int w = knobBounds.width;
-        int h = knobBounds.height;
+					// This is the fix for the bug #6401380
+					if (temp - (int)temp == .5 && sliderValue < lastValue) {
+						whichTick --;
+					}
+					snappedValue = slider.getMinimum() + (whichTick * tickSpacing);
+				}
 
-        g.translate(knobBounds.x, knobBounds.y);
+				if( snappedValue != sliderValue ) {
+					slider.setValue( snappedValue );
+				}
+			}
+		}
 
-        if ( slider.isEnabled() ) {
-            g.setColor(slider.getBackground());
-        }
-        else {
-            g.setColor(slider.getBackground().darker());
-        }
+		if ( slider.getOrientation() == JSlider.HORIZONTAL ) {
+			int valuePosition = xPositionForValue(slider.getValue() + slider.getExtent());
 
-        Boolean paintThumbArrowShape =
-            (Boolean)slider.getClientProperty("Slider.paintThumbArrowShape");
+			thumbRectMax.x = valuePosition - (thumbRectMax.width / 2);
+			thumbRectMax.y = trackRect.y;
+		}
+		else {
+			int valuePosition = yPositionForValue(slider.getValue() + slider.getExtent());
 
-        if ((!slider.getPaintTicks() && paintThumbArrowShape == null) ||
-            paintThumbArrowShape == Boolean.FALSE) {
+			thumbRectMax.x = trackRect.x;
+			thumbRectMax.y = valuePosition - (thumbRectMax.height / 2);
+		}
+	}
 
-            // "plain" version
-            g.fillRect(0, 0, w, h);
+	@Override
+	public void paint(Graphics g, JComponent jc) {
+		recalculateIfInsetsChanged();
+		recalculateIfOrientationChanged();
+		Rectangle clip = g.getClipBounds();
 
-            g.setColor(Color.black);
-            g.drawLine(0, h-1, w-1, h-1);
-            g.drawLine(w-1, 0, w-1, h-1);
+		if ( !clip.intersects(trackRect) && slider.getPaintTrack())
+			calculateGeometry();
 
-            g.setColor();
-            g.drawLine(0, 0, 0, h-2);
-            g.drawLine(1, 0, w-2, 0);
+		if ( slider.getPaintTrack() && clip.intersects( trackRect ) ) {
+			paintTrack( g );
+		}
+		if ( slider.getPaintTicks() && clip.intersects( tickRect ) ) {
+			paintTicks( g );
+		}
+		if ( slider.getPaintLabels() && clip.intersects( labelRect ) ) {
+			paintLabels( g );
+		}
+		if ( slider.hasFocus() && clip.intersects( focusRect ) ) {
+			paintFocus( g );
+		}
+		if ( clip.intersects( thumbRect ) ) {
+			paintThumb( g );
+		}
+		if ( clip.intersects( thumbRectMax ) ) {
+			paintThumbMax( g );
+		}
 
-            g.setColor(getShadowColor());
-            g.drawLine(1, h-2, w-2, h-2);
-            g.drawLine(w-2, 1, w-2, h-3);
-        }
-        else if ( slider.getOrientation() == JSlider.HORIZONTAL ) {
-            int cw = w / 2;
-            g.fillRect(1, 1, w-3, h-1-cw);
-            Polygon p = new Polygon();
-            p.addPoint(1, h-cw);
-            p.addPoint(cw-1, h-1);
-            p.addPoint(w-2, h-1-cw);
-            g.fillPolygon(p);
+	}
 
-            g.setColor(getHighlightColor());
-            g.drawLine(0, 0, w-2, 0);
-            g.drawLine(0, 1, 0, h-1-cw);
-            g.drawLine(0, h-cw, cw-1, h-1);
+	public void paintThumbMax(Graphics g) {
+		Rectangle knobBounds = thumbRectMax;
+		int w = knobBounds.width;
+		int h = knobBounds.height;
 
-            g.setColor(Color.black);
-            g.drawLine(w-1, 0, w-1, h-2-cw);
-            g.drawLine(w-1, h-1-cw, w-1-cw, h-1);
+		g.translate(knobBounds.x, knobBounds.y);
 
-            g.setColor(getShadowColor());
-            g.drawLine(w-2, 1, w-2, h-2-cw);
-            g.drawLine(w-2, h-1-cw, w-1-cw, h-2);
-        }
-        else {  // vertical
+		if ( slider.isEnabled() ) {
+			g.setColor(slider.getBackground());
+		}
+		else {
+			g.setColor(slider.getBackground().darker());
+		}
+
+		Boolean paintThumbArrowShape =
+				(Boolean)slider.getClientProperty("Slider.paintThumbArrowShape");
+
+		if ((!slider.getPaintTicks() && paintThumbArrowShape == null) ||
+				paintThumbArrowShape == Boolean.FALSE) {
+
+			// "plain" version
+			g.fillRect(0, 0, w, h);
+
+			g.setColor(Color.black);
+			g.drawLine(0, h-1, w-1, h-1);
+			g.drawLine(w-1, 0, w-1, h-1);
+
+			g.setColor(Color.blue);
+			g.drawLine(0, 0, 0, h-2);
+			g.drawLine(1, 0, w-2, 0);
+
+			g.setColor(getShadowColor());
+			g.drawLine(1, h-2, w-2, h-2);
+			g.drawLine(w-2, 1, w-2, h-3);
+		}
+		else if ( slider.getOrientation() == JSlider.HORIZONTAL ) {
+			int cw = w / 2;
+			g.fillRect(1, 1, w-3, h-1-cw);
+			Polygon p = new Polygon();
+			p.addPoint(1, h-cw);
+			p.addPoint(cw-1, h-1);
+			p.addPoint(w-2, h-1-cw);
+			g.fillPolygon(p);
+
+			g.setColor(getHighlightColor());
+			g.drawLine(0, 0, w-2, 0);
+			g.drawLine(0, 1, 0, h-1-cw);
+			g.drawLine(0, h-cw, cw-1, h-1);
+
+			g.setColor(Color.black);
+			g.drawLine(w-1, 0, w-1, h-2-cw);
+			g.drawLine(w-1, h-1-cw, w-1-cw, h-1);
+
+			g.setColor(getShadowColor());
+			g.drawLine(w-2, 1, w-2, h-2-cw);
+			g.drawLine(w-2, h-1-cw, w-1-cw, h-2);
+		}
+		/*else {  // vertical
             int cw = h / 2;
             if(BasicGraphicsUtils.isLeftToRight(slider)) {
                   g.fillRect(1, 1, w-1-cw, h-3);
@@ -212,10 +225,256 @@ public class RangeSliderUI extends BasicSliderUI {
                   g.drawLine(cw, h-2, w-2,  h-2 );         // bottom
                   g.drawLine(w-1, 1, w-1,  h-2 );          // right
             }
-        }
+        }*/
 
-        g.translate(-knobBounds.x, -knobBounds.y);
-    }
-    
-  
+		g.translate(-knobBounds.x, -knobBounds.y);
+	}
+
+	/////////////////////////////////////////////////////////////////////////
+	/// Track Listener Class
+	/////////////////////////////////////////////////////////////////////////
+	/**
+	 * Track mouse movements.
+	 *
+	 * This class should be treated as a &quot;protected&quot; inner class.
+	 * Instantiate it only within subclasses of <code>Foo</code>.
+	 */
+	public class RangeTrackListener extends BasicSliderUI.TrackListener {
+		protected transient int offset;
+		protected transient int currentMouseX, currentMouseY;
+
+		public void mouseReleased(MouseEvent e) {
+			if (!slider.isEnabled()) {
+				return;
+			}
+
+			offset = 0;
+			scrollTimer.stop();
+
+			isDragging = false;
+			slider.setValueIsAdjusting(false);
+			slider.repaint();
+		}
+
+		/**
+		 * If the mouse is pressed above the "thumb" component
+		 * then reduce the scrollbars value by one page ("page up"),
+		 * otherwise increase it by one page.  If there is no
+		 * thumb then page up if the mouse is in the upper half
+		 * of the track.
+		 */
+		public void mousePressed(MouseEvent e) {
+			if (!slider.isEnabled()) {
+				return;
+			}
+
+			// We should recalculate geometry just before
+			// calculation of the thumb movement direction.
+			// It is important for the case, when JSlider
+			// is a cell editor in JTable. See 6348946.
+			calculateGeometry();
+
+			currentMouseX = e.getX();
+			currentMouseY = e.getY();
+
+			if (slider.isRequestFocusEnabled()) {
+				slider.requestFocus();
+			}
+
+			// Clicked in the Thumb area?
+			if (thumbRect.contains(currentMouseX, currentMouseY)) {
+				if (UIManager.getBoolean("Slider.onlyLeftMouseButtonDrag")
+						&& !SwingUtilities.isLeftMouseButton(e)) {
+					return;
+				}
+
+				switch (slider.getOrientation()) {
+				case JSlider.VERTICAL:
+					offset = currentMouseY - thumbRect.y;
+					break;
+				case JSlider.HORIZONTAL:
+					offset = currentMouseX - thumbRect.x;
+					break;
+				}
+				isDragging = true;
+				return;
+			}
+
+			if (!SwingUtilities.isLeftMouseButton(e)) {
+				return;
+			}
+
+			isDragging = false;
+			slider.setValueIsAdjusting(true);
+
+			Dimension sbSize = slider.getSize();
+			int direction = POSITIVE_SCROLL;
+
+			switch (slider.getOrientation()) {
+			case JSlider.VERTICAL:
+				if ( thumbRect.isEmpty() ) {
+					int scrollbarCenter = sbSize.height / 2;
+					if ( !drawInverted() ) {
+						direction = (currentMouseY < scrollbarCenter) ?
+								POSITIVE_SCROLL : NEGATIVE_SCROLL;
+					}
+					else {
+						direction = (currentMouseY < scrollbarCenter) ?
+								NEGATIVE_SCROLL : POSITIVE_SCROLL;
+					}
+				}
+				else {
+					int thumbY = thumbRect.y;
+					if ( !drawInverted() ) {
+						direction = (currentMouseY < thumbY) ?
+								POSITIVE_SCROLL : NEGATIVE_SCROLL;
+					}
+					else {
+						direction = (currentMouseY < thumbY) ?
+								NEGATIVE_SCROLL : POSITIVE_SCROLL;
+					}
+				}
+				break;
+			case JSlider.HORIZONTAL:
+				if ( thumbRect.isEmpty() ) {
+					int scrollbarCenter = sbSize.width / 2;
+					if ( !drawInverted() ) {
+						direction = (currentMouseX < scrollbarCenter) ?
+								NEGATIVE_SCROLL : POSITIVE_SCROLL;
+					}
+					else {
+						direction = (currentMouseX < scrollbarCenter) ?
+								POSITIVE_SCROLL : NEGATIVE_SCROLL;
+					}
+				}
+				else {
+					int thumbX = thumbRect.x;
+					if ( !drawInverted() ) {
+						direction = (currentMouseX < thumbX) ?
+								NEGATIVE_SCROLL : POSITIVE_SCROLL;
+					}
+					else {
+						direction = (currentMouseX < thumbX) ?
+								POSITIVE_SCROLL : NEGATIVE_SCROLL;
+					}
+				}
+				break;
+			}
+
+			if (shouldScroll(direction)) {
+				scrollDueToClickInTrack(direction);
+			}
+			if (shouldScroll(direction)) {
+				scrollTimer.stop();
+				scrollListener.setDirection(direction);
+				scrollTimer.start();
+			}
+		}
+
+		public boolean shouldScroll(int direction) {
+			Rectangle r = thumbRect;
+			if (slider.getOrientation() == JSlider.VERTICAL) {
+				if (drawInverted() ? direction < 0 : direction > 0) {
+					if (r.y  <= currentMouseY) {
+						return false;
+					}
+				}
+				else if (r.y + r.height >= currentMouseY) {
+					return false;
+				}
+			}
+			else {
+				if (drawInverted() ? direction < 0 : direction > 0) {
+					if (r.x + r.width  >= currentMouseX) {
+						return false;
+					}
+				}
+				else if (r.x <= currentMouseX) {
+					return false;
+				}
+			}
+
+			if (direction > 0 && slider.getValue() + slider.getExtent() >=
+					slider.getMaximum()) {
+				return false;
+			}
+			else if (direction < 0 && slider.getValue() <=
+					slider.getMinimum()) {
+				return false;
+			}
+
+			return true;
+		}
+
+		/**
+		 * Set the models value to the position of the top/left
+		 * of the thumb relative to the origin of the track.
+		 */
+		public void mouseDragged(MouseEvent e) {
+			int thumbMiddle;
+
+			if (!slider.isEnabled()) {
+				return;
+			}
+
+			currentMouseX = e.getX();
+			currentMouseY = e.getY();
+
+			if (!isDragging) {
+				return;
+			}
+
+			slider.setValueIsAdjusting(true);
+
+			switch (slider.getOrientation()) {
+			case JSlider.VERTICAL:
+				int halfThumbHeight = thumbRect.height / 2;
+				int thumbTop = e.getY() - offset;
+				int trackTop = trackRect.y;
+				int trackBottom = trackRect.y + (trackRect.height - 1);
+				int vMax = yPositionForValue(slider.getMaximum() -
+						slider.getExtent());
+
+				if (drawInverted()) {
+					trackBottom = vMax;
+				}
+				else {
+					trackTop = vMax;
+				}
+				thumbTop = Math.max(thumbTop, trackTop - halfThumbHeight);
+				thumbTop = Math.min(thumbTop, trackBottom - halfThumbHeight);
+
+				setThumbLocation(thumbRect.x, thumbTop);
+
+				thumbMiddle = thumbTop + halfThumbHeight;
+				slider.setValue( valueForYPosition( thumbMiddle ) );
+				break;
+			case JSlider.HORIZONTAL:
+				int halfThumbWidth = thumbRect.width / 2;
+				int thumbLeft = e.getX() - offset;
+				int trackLeft = trackRect.x;
+				int trackRight = trackRect.x + (trackRect.width - 1);
+				int hMax = xPositionForValue(slider.getMaximum() -
+						slider.getExtent());
+
+				if (drawInverted()) {
+					trackLeft = hMax;
+				}
+				else {
+					trackRight = hMax;
+				}
+				thumbLeft = Math.max(thumbLeft, trackLeft - halfThumbWidth);
+				thumbLeft = Math.min(thumbLeft, trackRight - halfThumbWidth);
+
+				setThumbLocation(thumbLeft, thumbRect.y);
+
+				thumbMiddle = thumbLeft + halfThumbWidth;
+				slider.setValue(valueForXPosition(thumbMiddle));
+				break;
+			}
+		}
+
+		public void mouseMoved(MouseEvent e) { }
+	}
+
 }
