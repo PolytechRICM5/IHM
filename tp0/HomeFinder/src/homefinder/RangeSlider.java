@@ -2,6 +2,7 @@ package homefinder;
 
 import javax.swing.BoundedRangeModel;
 import javax.swing.JSlider;
+import javax.swing.plaf.basic.BasicSliderUI;
 
 /**
  *

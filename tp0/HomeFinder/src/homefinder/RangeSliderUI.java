@@ -6,7 +6,6 @@
 package homefinder;
 
 import java.awt.Color;
-import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Polygon;
 import java.awt.Rectangle;
@@ -30,7 +29,8 @@ public class RangeSliderUI extends BasicSliderUI {
 
 	// Redefining private variables used in the BasiSliderUI that we need
 	private int lastValue;
-	private boolean isDragging;
+	private boolean isDraggingMin;
+	private boolean isDraggingMax;
 
 	public RangeSliderUI(RangeSlider rs) {
 		super(rs);
@@ -230,6 +230,19 @@ public class RangeSliderUI extends BasicSliderUI {
 		g.translate(-knobBounds.x, -knobBounds.y);
 	}
 
+	protected TrackListener createTrackListener(JSlider slider) {
+		return new RangeTrackListener();
+	}
+	
+	public void setThumbMaxLocation(int x, int y)  {
+		Rectangle unionRect = new Rectangle();
+		unionRect.setBounds( thumbRectMax);
+		thumbRectMax.setLocation( x, y );
+
+		SwingUtilities.computeUnion( thumbRectMax.x, thumbRectMax.y, thumbRectMax.width, thumbRectMax.height, unionRect );
+		slider.repaint( unionRect.x, unionRect.y, unionRect.width, unionRect.height );
+	}
+
 	/////////////////////////////////////////////////////////////////////////
 	/// Track Listener Class
 	/////////////////////////////////////////////////////////////////////////
@@ -251,7 +264,8 @@ public class RangeSliderUI extends BasicSliderUI {
 			offset = 0;
 			scrollTimer.stop();
 
-			isDragging = false;
+			isDraggingMin = false;
+			isDraggingMax = false;
 			slider.setValueIsAdjusting(false);
 			slider.repaint();
 		}
@@ -296,7 +310,24 @@ public class RangeSliderUI extends BasicSliderUI {
 					offset = currentMouseX - thumbRect.x;
 					break;
 				}
-				isDragging = true;
+				isDraggingMin = true;
+				return;
+			}
+			if (thumbRectMax.contains(currentMouseX, currentMouseY)) {
+				if (UIManager.getBoolean("Slider.onlyLeftMouseButtonDrag")
+						&& !SwingUtilities.isLeftMouseButton(e)) {
+					return;
+				}
+
+				switch (slider.getOrientation()) {
+				case JSlider.VERTICAL:
+					offset = currentMouseY - thumbRectMax.y;
+					break;
+				case JSlider.HORIZONTAL:
+					offset = currentMouseX - thumbRectMax.x;
+					break;
+				}
+				isDraggingMax = true;
 				return;
 			}
 
@@ -304,9 +335,10 @@ public class RangeSliderUI extends BasicSliderUI {
 				return;
 			}
 
-			isDragging = false;
+			isDraggingMin = false;
+			isDraggingMax = false;
 			slider.setValueIsAdjusting(true);
-
+			/*
 			Dimension sbSize = slider.getSize();
 			int direction = POSITIVE_SCROLL;
 
@@ -368,42 +400,7 @@ public class RangeSliderUI extends BasicSliderUI {
 				scrollTimer.stop();
 				scrollListener.setDirection(direction);
 				scrollTimer.start();
-			}
-		}
-
-		public boolean shouldScroll(int direction) {
-			Rectangle r = thumbRect;
-			if (slider.getOrientation() == JSlider.VERTICAL) {
-				if (drawInverted() ? direction < 0 : direction > 0) {
-					if (r.y  <= currentMouseY) {
-						return false;
-					}
-				}
-				else if (r.y + r.height >= currentMouseY) {
-					return false;
-				}
-			}
-			else {
-				if (drawInverted() ? direction < 0 : direction > 0) {
-					if (r.x + r.width  >= currentMouseX) {
-						return false;
-					}
-				}
-				else if (r.x <= currentMouseX) {
-					return false;
-				}
-			}
-
-			if (direction > 0 && slider.getValue() + slider.getExtent() >=
-					slider.getMaximum()) {
-				return false;
-			}
-			else if (direction < 0 && slider.getValue() <=
-					slider.getMinimum()) {
-				return false;
-			}
-
-			return true;
+			}*/
 		}
 
 		/**
@@ -420,61 +417,107 @@ public class RangeSliderUI extends BasicSliderUI {
 			currentMouseX = e.getX();
 			currentMouseY = e.getY();
 
-			if (!isDragging) {
+			if (!isDraggingMin && !isDraggingMax) {
 				return;
 			}
 
 			slider.setValueIsAdjusting(true);
 
-			switch (slider.getOrientation()) {
-			case JSlider.VERTICAL:
-				int halfThumbHeight = thumbRect.height / 2;
-				int thumbTop = e.getY() - offset;
-				int trackTop = trackRect.y;
-				int trackBottom = trackRect.y + (trackRect.height - 1);
-				int vMax = yPositionForValue(slider.getMaximum() -
-						slider.getExtent());
+			if(isDraggingMin) {
+				switch (slider.getOrientation()) {
+				case JSlider.VERTICAL:
+					int halfThumbHeight = thumbRect.height / 2;
+					int thumbTop = e.getY() - offset;
+					int trackTop = trackRect.y;
+					int trackBottom = trackRect.y + (trackRect.height - 1);
+					int vMax = yPositionForValue(slider.getValue() +
+							slider.getExtent());
 
-				if (drawInverted()) {
-					trackBottom = vMax;
+					if (drawInverted()) {
+						trackBottom = vMax;
+					}
+					else {
+						trackTop = vMax;
+					}
+					thumbTop = Math.max(thumbTop, trackTop - halfThumbHeight);
+					thumbTop = Math.min(thumbTop, trackBottom - halfThumbHeight);
+
+					setThumbLocation(thumbRect.x, thumbTop);
+
+					thumbMiddle = thumbTop + halfThumbHeight;
+					slider.setValue( valueForYPosition( thumbMiddle ) );
+					break;
+				case JSlider.HORIZONTAL:
+					int halfThumbWidth = thumbRect.width / 2;
+					int thumbLeft = e.getX() - offset;
+					int trackLeft = trackRect.x;
+					int trackRight = trackRect.x + (trackRect.width - 1);
+					int hMax = xPositionForValue(slider.getValue() +
+							slider.getExtent());
+
+					if (drawInverted()) {
+						trackLeft = hMax;
+					}
+					else {
+						trackRight = hMax;
+					}
+					thumbLeft = Math.max(thumbLeft, trackLeft - halfThumbWidth);
+					thumbLeft = Math.min(thumbLeft, trackRight - halfThumbWidth);
+
+					setThumbLocation(thumbLeft, thumbRect.y);
+
+					thumbMiddle = thumbLeft + halfThumbWidth;
+					slider.setValue(valueForXPosition(thumbMiddle));
+					break;
 				}
-				else {
-					trackTop = vMax;
+			} else if(isDraggingMax) {
+				switch (slider.getOrientation()) {
+				case JSlider.VERTICAL:
+					int halfThumbHeight = thumbRectMax.height / 2;
+					int thumbTop = e.getY() - offset;
+					int trackTop = trackRect.y;
+					int trackBottom = trackRect.y + (trackRect.height - 1);
+					int vMin = yPositionForValue(slider.getValue());
+
+					if (drawInverted()) {
+						trackBottom = vMin;
+					}
+					else {
+						trackTop = vMin;
+					}
+					thumbTop = Math.max(thumbTop, trackTop - halfThumbHeight);
+					thumbTop = Math.min(thumbTop, trackBottom - halfThumbHeight);
+
+					setThumbMaxLocation(thumbRectMax.x, thumbTop);
+
+					thumbMiddle = thumbTop + halfThumbHeight;
+					slider.setExtent( valueForYPosition( thumbMiddle ) - slider.getValue());
+					break;
+				case JSlider.HORIZONTAL:
+					int halfThumbWidth = thumbRectMax.width / 2;
+					int thumbLeft = e.getX() - offset;
+					int trackLeft = trackRect.x;
+					int trackRight = trackRect.x + (trackRect.width - 1);
+					int hMin = xPositionForValue(slider.getValue());
+
+					if (drawInverted()) {
+						trackRight = hMin;
+					}
+					else {
+						trackLeft = hMin;
+					}
+					thumbLeft = Math.max(thumbLeft, trackLeft - halfThumbWidth);
+					thumbLeft = Math.min(thumbLeft, trackRight - halfThumbWidth);
+
+					setThumbMaxLocation(thumbLeft, thumbRectMax.y);
+
+					thumbMiddle = thumbLeft + halfThumbWidth;
+					slider.setExtent(valueForXPosition(thumbMiddle) - slider.getValue());
+					break;
 				}
-				thumbTop = Math.max(thumbTop, trackTop - halfThumbHeight);
-				thumbTop = Math.min(thumbTop, trackBottom - halfThumbHeight);
-
-				setThumbLocation(thumbRect.x, thumbTop);
-
-				thumbMiddle = thumbTop + halfThumbHeight;
-				slider.setValue( valueForYPosition( thumbMiddle ) );
-				break;
-			case JSlider.HORIZONTAL:
-				int halfThumbWidth = thumbRect.width / 2;
-				int thumbLeft = e.getX() - offset;
-				int trackLeft = trackRect.x;
-				int trackRight = trackRect.x + (trackRect.width - 1);
-				int hMax = xPositionForValue(slider.getMaximum() -
-						slider.getExtent());
-
-				if (drawInverted()) {
-					trackLeft = hMax;
-				}
-				else {
-					trackRight = hMax;
-				}
-				thumbLeft = Math.max(thumbLeft, trackLeft - halfThumbWidth);
-				thumbLeft = Math.min(thumbLeft, trackRight - halfThumbWidth);
-
-				setThumbLocation(thumbLeft, thumbRect.y);
-
-				thumbMiddle = thumbLeft + halfThumbWidth;
-				slider.setValue(valueForXPosition(thumbMiddle));
-				break;
 			}
 		}
 
-		public void mouseMoved(MouseEvent e) { }
 	}
 
 }
