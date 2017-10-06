@@ -5,7 +5,7 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
 /**
- *
+ * This class was definied at the beginning of the TP but isn't used in the end.
  * @author alicia
  */
 public class RangeSliderModel  implements _RangeSliderModel {

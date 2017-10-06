@@ -53,7 +53,10 @@ public class RangeSliderUI extends BasicSliderUI {
 		super.calculateThumbSize();
 		thumbRectMax.setSize(thumbRect.width, thumbRect.height);
 	}
-
+	
+	/**
+	 * Redefined to calculate the location of the upper Thumb also
+	 */
 	protected void calculateThumbLocation() {
 		super.calculateThumbLocation();
 
@@ -119,10 +122,12 @@ public class RangeSliderUI extends BasicSliderUI {
 		if ( clip.intersects( thumbRect ) ) {
 			paintThumb( g );
 		}
+		/*
+		 * Added to repaint the thumb of the upper value if necessary
+		 */
 		if ( clip.intersects( thumbRectMax ) ) {
 			paintThumbMax( g );
 		}
-
 	}
 
 	public void paintThumbMax(Graphics g) {
@@ -182,7 +187,8 @@ public class RangeSliderUI extends BasicSliderUI {
 			g.drawLine(w-2, 1, w-2, h-2-cw);
 			g.drawLine(w-2, h-1-cw, w-1-cw, h-2);
 		}
-		/*else {  // vertical
+		/* Commented because it was not working with BasicGraphicsUtils
+		else {  // vertical
             int cw = h / 2;
             if(BasicGraphicsUtils.isLeftToRight(slider)) {
                   g.fillRect(1, 1, w-1-cw, h-3);
@@ -230,6 +236,9 @@ public class RangeSliderUI extends BasicSliderUI {
 		g.translate(-knobBounds.x, -knobBounds.y);
 	}
 
+	/**
+	 * Redefined to instanciate the listener
+	 */
 	protected TrackListener createTrackListener(JSlider slider) {
 		return new RangeTrackListener();
 	}
@@ -295,7 +304,7 @@ public class RangeSliderUI extends BasicSliderUI {
 				slider.requestFocus();
 			}
 
-			// Clicked in the Thumb area?
+			// Clicked in the lower Thumb area?
 			if (thumbRect.contains(currentMouseX, currentMouseY)) {
 				if (UIManager.getBoolean("Slider.onlyLeftMouseButtonDrag")
 						&& !SwingUtilities.isLeftMouseButton(e)) {
@@ -313,6 +322,7 @@ public class RangeSliderUI extends BasicSliderUI {
 				isDraggingMin = true;
 				return;
 			}
+			// Clicked in the upper Thumb area?
 			if (thumbRectMax.contains(currentMouseX, currentMouseY)) {
 				if (UIManager.getBoolean("Slider.onlyLeftMouseButtonDrag")
 						&& !SwingUtilities.isLeftMouseButton(e)) {
@@ -338,69 +348,7 @@ public class RangeSliderUI extends BasicSliderUI {
 			isDraggingMin = false;
 			isDraggingMax = false;
 			slider.setValueIsAdjusting(true);
-			/*
-			Dimension sbSize = slider.getSize();
-			int direction = POSITIVE_SCROLL;
-
-			switch (slider.getOrientation()) {
-			case JSlider.VERTICAL:
-				if ( thumbRect.isEmpty() ) {
-					int scrollbarCenter = sbSize.height / 2;
-					if ( !drawInverted() ) {
-						direction = (currentMouseY < scrollbarCenter) ?
-								POSITIVE_SCROLL : NEGATIVE_SCROLL;
-					}
-					else {
-						direction = (currentMouseY < scrollbarCenter) ?
-								NEGATIVE_SCROLL : POSITIVE_SCROLL;
-					}
-				}
-				else {
-					int thumbY = thumbRect.y;
-					if ( !drawInverted() ) {
-						direction = (currentMouseY < thumbY) ?
-								POSITIVE_SCROLL : NEGATIVE_SCROLL;
-					}
-					else {
-						direction = (currentMouseY < thumbY) ?
-								NEGATIVE_SCROLL : POSITIVE_SCROLL;
-					}
-				}
-				break;
-			case JSlider.HORIZONTAL:
-				if ( thumbRect.isEmpty() ) {
-					int scrollbarCenter = sbSize.width / 2;
-					if ( !drawInverted() ) {
-						direction = (currentMouseX < scrollbarCenter) ?
-								NEGATIVE_SCROLL : POSITIVE_SCROLL;
-					}
-					else {
-						direction = (currentMouseX < scrollbarCenter) ?
-								POSITIVE_SCROLL : NEGATIVE_SCROLL;
-					}
-				}
-				else {
-					int thumbX = thumbRect.x;
-					if ( !drawInverted() ) {
-						direction = (currentMouseX < thumbX) ?
-								NEGATIVE_SCROLL : POSITIVE_SCROLL;
-					}
-					else {
-						direction = (currentMouseX < thumbX) ?
-								POSITIVE_SCROLL : NEGATIVE_SCROLL;
-					}
-				}
-				break;
-			}
-
-			if (shouldScroll(direction)) {
-				scrollDueToClickInTrack(direction);
-			}
-			if (shouldScroll(direction)) {
-				scrollTimer.stop();
-				scrollListener.setDirection(direction);
-				scrollTimer.start();
-			}*/
+			
 		}
 
 		/**
@@ -470,7 +418,8 @@ public class RangeSliderUI extends BasicSliderUI {
 					slider.setValue(valueForXPosition(thumbMiddle));
 					break;
 				}
-			} else if(isDraggingMax) {
+			} 
+			else if(isDraggingMax) {
 				switch (slider.getOrientation()) {
 				case JSlider.VERTICAL:
 					int halfThumbHeight = thumbRectMax.height / 2;
