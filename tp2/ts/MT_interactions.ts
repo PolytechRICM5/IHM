@@ -24,7 +24,17 @@ function multiTouch(element: HTMLElement) : void {
                 eventName: ["touchstart"],
                 useCapture: false,
                 action: (evt : TouchEvent) : boolean => {
-                    // To be completed
+                    // On récupère le point de départ comme ancre
+                    Pt1_coord_element = transfo.getPoint(
+                        evt.changedTouches.item(0).clientX,
+                        evt.changedTouches.item(0).clientY
+                    );
+                    // On garde son Id (pour le mutitouch plus tard
+                    pointerId_1 = evt.changedTouches.item(0).identifier;
+                    // On transforme les coordonnées pour les avoir dans le repère de l'élemnet HTML grâce à
+                    // la matrice de transformation de ce dernier
+                    originalMatrix = transfo.getMatrixFromElement(element);
+                    Pt1_coord_element = Pt1_coord_element.matrixTransform(originalMatrix.inverse());
                     return true;
                 }
             },
@@ -35,7 +45,18 @@ function multiTouch(element: HTMLElement) : void {
                 action: (evt : TouchEvent) : boolean => {
                     evt.preventDefault();
                     evt.stopPropagation();
-                    // To be completed
+                    // On récupère le point actuel de position du curseur
+                    Pt1_coord_parent = transfo.getPoint(
+                        evt.changedTouches.item(0).clientX,
+                        evt.changedTouches.item(0).clientY
+                    );
+                    // On effectue la transformation
+                    transfo.drag(
+                        element,
+                        originalMatrix,
+                        Pt1_coord_element,
+                        Pt1_coord_parent
+                    );
                     return true;
                 }
             },
@@ -45,7 +66,9 @@ function multiTouch(element: HTMLElement) : void {
                 eventName: ["touchend"],
                 useCapture: true,
                 action: (evt : TouchEvent) : boolean => {
-                    // To be completed
+                    pointerId_1 = null;
+                    Pt1_coord_element = null;
+                    Pt1_coord_parent = null;
                     return true;
                 }
             },
@@ -54,7 +77,17 @@ function multiTouch(element: HTMLElement) : void {
                 eventName: ["touchstart"],
                 useCapture: false,
                 action: (evt : TouchEvent) : boolean => {
-                    // To be completed
+                    // On récupère le point de départ comme ancre
+                    Pt2_coord_element = transfo.getPoint(
+                        evt.changedTouches.item(0).clientX,
+                        evt.changedTouches.item(0).clientY
+                    );
+                    // On garde son Id (pour le mutitouch
+                    pointerId_2 = evt.changedTouches.item(0).identifier;
+                    // On transforme les coordonnées pour les avoir dans le repère de l'élemnet HTML grâce à
+                    // la matrice de transformation de ce dernier
+                    originalMatrix = transfo.getMatrixFromElement(element);
+                    Pt2_coord_element = Pt2_coord_element.matrixTransform(originalMatrix.inverse());
                     return true;
                 }
             },
@@ -65,7 +98,27 @@ function multiTouch(element: HTMLElement) : void {
                 action: (evt : TouchEvent) : boolean => {
                     evt.preventDefault();
                     evt.stopPropagation();
-                    // To be completed
+
+                    let touch = getRelevantDataFromEvent(evt);
+                    if(touch.identifier === pointerId_1) {
+                        Pt1_coord_parent = transfo.getPoint(
+                            touch.clientX,
+                            touch.clientY
+                        );
+                    } else if (touch.identifier === pointerId_2) {
+                        Pt2_coord_parent = transfo.getPoint(
+                            touch.clientX,
+                            touch.clientY
+                        );
+                    }
+                    transfo.rotozoom(
+                        element,
+                        originalMatrix,
+                        Pt1_coord_element,
+                        Pt1_coord_parent,
+                        Pt2_coord_element,
+                        Pt2_coord_parent
+                    );
                     return true;
                 }
             },
@@ -76,7 +129,17 @@ function multiTouch(element: HTMLElement) : void {
                 useCapture: true,
                 action: (evt : TouchEvent) : boolean => {
                     let touch = getRelevantDataFromEvent(evt);
-                    // To be completed
+                    if(touch !== null) {
+                        if (touch.identifier === pointerId_1) {
+                            pointerId_1 = pointerId_2;
+                            Pt1_coord_element = Pt2_coord_element;
+                            Pt1_coord_parent = Pt2_coord_parent;
+                        }
+                        pointerId_2 = null;
+                        Pt2_coord_element = null;
+                        Pt2_coord_parent = null;
+                        originalMatrix = transfo.getMatrixFromElement(element);
+                    }
                     return true;
                 }
             }
