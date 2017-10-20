@@ -1,6 +1,8 @@
 import { FSM } from "./FSM";
 import * as transfo from "./transfo";
 
+let zindex = 5;
+
 function multiTouch(element: HTMLElement) : void {
     let pointerId_1 : number, Pt1_coord_element : SVGPoint, Pt1_coord_parent : SVGPoint,
         pointerId_2 : number, Pt2_coord_element : SVGPoint, Pt2_coord_parent : SVGPoint,
@@ -24,11 +26,16 @@ function multiTouch(element: HTMLElement) : void {
                 eventName: ["touchstart"],
                 useCapture: false,
                 action: (evt : TouchEvent) : boolean => {
+                    // On met l'image au premier plan
+                    element.style.zIndex = zindex.toString();
+                    zindex++;
+
                     // On récupère le point de départ comme ancre
                     Pt1_coord_element = transfo.getPoint(
                         evt.changedTouches.item(0).clientX,
                         evt.changedTouches.item(0).clientY
                     );
+                    Pt1_coord_parent = Pt1_coord_element;
                     // On garde son Id (pour le mutitouch plus tard
                     pointerId_1 = evt.changedTouches.item(0).identifier;
                     // On transforme les coordonnées pour les avoir dans le repère de l'élemnet HTML grâce à
@@ -46,9 +53,10 @@ function multiTouch(element: HTMLElement) : void {
                     evt.preventDefault();
                     evt.stopPropagation();
                     // On récupère le point actuel de position du curseur
+                    let touch = getRelevantDataFromEvent(evt);
                     Pt1_coord_parent = transfo.getPoint(
-                        evt.changedTouches.item(0).clientX,
-                        evt.changedTouches.item(0).clientY
+                        touch.clientX,
+                        touch.clientY
                     );
                     // On effectue la transformation
                     transfo.drag(
@@ -82,8 +90,10 @@ function multiTouch(element: HTMLElement) : void {
                         evt.changedTouches.item(0).clientX,
                         evt.changedTouches.item(0).clientY
                     );
+                    Pt2_coord_parent = Pt2_coord_element;
                     // On garde son Id (pour le mutitouch
                     pointerId_2 = evt.changedTouches.item(0).identifier;
+
                     // On transforme les coordonnées pour les avoir dans le repère de l'élemnet HTML grâce à
                     // la matrice de transformation de ce dernier
                     originalMatrix = transfo.getMatrixFromElement(element);
@@ -98,18 +108,14 @@ function multiTouch(element: HTMLElement) : void {
                 action: (evt : TouchEvent) : boolean => {
                     evt.preventDefault();
                     evt.stopPropagation();
-
-                    let touch = getRelevantDataFromEvent(evt);
-                    if(touch.identifier === pointerId_1) {
-                        Pt1_coord_parent = transfo.getPoint(
-                            touch.clientX,
-                            touch.clientY
-                        );
-                    } else if (touch.identifier === pointerId_2) {
-                        Pt2_coord_parent = transfo.getPoint(
-                            touch.clientX,
-                            touch.clientY
-                        );
+                    for(let i=0; i<evt.changedTouches.length; i++) {
+                        let touch = evt.changedTouches.item(i);
+                        if(touch.identifier === pointerId_1) {
+                            Pt1_coord_parent = transfo.getPoint(touch.clientX,touch.clientY);
+                        }
+                        if(touch.identifier === pointerId_2) {
+                            Pt2_coord_parent = transfo.getPoint(touch.clientX,touch.clientY);
+                        }
                     }
                     transfo.rotozoom(
                         element,

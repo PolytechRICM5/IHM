@@ -83,7 +83,7 @@ export let rotozoom =   ( element           : HTMLElement
     let dx2 = Pt2_coord_parent.x - Pt1_coord_parent.x;
     let dy2 = Pt2_coord_parent.y - Pt1_coord_parent.y;
 
-    if( dx === dy) {
+    if( dx === dy && dx === 0) {
         return;
     } else if(dx === 0) {
         s = -dx2 / dy;
