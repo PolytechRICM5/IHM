@@ -2,9 +2,10 @@ $(document).ready( function() {
 
   //$(".menu").hide();
 
-  var latency = 1000;
+  var latency = 300;
   var timeoutid = 0;
   var current_level = 1;
+  var mouse_pos;
 
   var new_menu = null;
 
@@ -46,6 +47,7 @@ $(document).ready( function() {
   $(document).mousemove(function(e) {
     if(active_stroke) {
 
+      mouse_pos = e;
       /* Attendre latency ms avant que l'action goToSubMenu soit réalisée */
       clearTimeout(timeoutid);
       timeoutid = setTimeout(goToSubMenu, latency);
@@ -104,6 +106,18 @@ $(document).ready( function() {
         console.log(current_level);
         $(".sub-menu").removeClass("selected");
         /* Afficher et masquer les différents niveaux */
+    	$("#menu-1").remove();
+
+    	new_menu = $("#"+sub).clone(true, true);
+    	new_menu.attr("id", "menu-1");
+    	$("body").prepend(new_menu);
+	    new_menu.css({
+	      top: mouse_pos.pageY - $(".menu").height() / 2,
+	      left: mouse_pos.pageX - $(".menu").width() / 2
+	    });
+	    point1.x = mouse_pos.pageX;
+    	point1.y = mouse_pos.pageY;
+
         $(new_menu).show();
         $(".sub-menu[level!='"+current_level+"']",new_menu).hide();
       }
