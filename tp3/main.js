@@ -23,7 +23,7 @@ $(document).ready( function() {
     //$("#target");
     current_level = 1;
 
-    new_menu = $(".menu").clone(true, true);
+    new_menu = $("#main-menu").clone(true, true);
 
     new_menu.attr("id", "menu-1");
 
@@ -82,7 +82,7 @@ $(document).ready( function() {
 
   $(document).mouseup(function(){
 
-    var selected_text = $('#menu-1 li[level="1"].selected').text();
+    var selected_text = $("#menu-1 li[level='"+current_level+"'].selected").text();
     console.log(selected_text);
     $("#menu-1").remove();
 
@@ -97,15 +97,17 @@ $(document).ready( function() {
   function goToSubMenu() {
     var curr_selected = $("#menu-1 li[level='"+current_level+"'].selected:first");
     if(curr_selected.length) {
-      if(curr_selected.children().length > 0) {
+      var sub = curr_selected.attr("sub");
+      console.log(sub);
+      if(sub) {
         current_level++;
+        console.log(current_level);
         $(".sub-menu").removeClass("selected");
         /* Afficher et masquer les différents niveaux */
         $(new_menu).show();
         $(".sub-menu[level!='"+current_level+"']",new_menu).hide();
       }
     }
-
   }
 
 });
