@@ -2,9 +2,10 @@ $(document).ready( function() {
 
   //$(".menu").hide();
 
-  var latency = 1000;
+  var latency = 100;
   var timeoutid = 0;
   var current_level = 1;
+  var mouse_pos;
 
   var new_menu = null;
 
@@ -12,6 +13,7 @@ $(document).ready( function() {
   c.width = $(window).width();
   c.height = $(window).height();
   var ctx=c.getContext("2d");
+
 
   active_stroke = false;
   var point1 = [];
@@ -37,8 +39,7 @@ $(document).ready( function() {
     $(new_menu).show();
     $(".sub-menu[level!='"+current_level+"']",new_menu).hide();
 
-    point1.x = e.pageX;
-    point1.y = e.pageY;
+    point1 = getMousePos(c,e);
     active_stroke = true;
 
   });
@@ -46,12 +47,12 @@ $(document).ready( function() {
   $(document).mousemove(function(e) {
     if(active_stroke) {
 
+      mouse_pos = e;
       /* Attendre latency ms avant que l'action goToSubMenu soit réalisée */
       clearTimeout(timeoutid);
       timeoutid = setTimeout(goToSubMenu, latency);
 
-      point2.x = e.pageX;
-      point2.y = e.pageY;
+      point2 = getMousePos(c,e);
 
       ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
       ctx.beginPath();
@@ -83,7 +84,7 @@ $(document).ready( function() {
   $(document).mouseup(function(){
 
     var selected_text = $("#menu-1 li[level='"+current_level+"'].selected").text();
-    console.log(selected_text);
+    $("#selected_item").text(selected_text);
     $("#menu-1").remove();
 
     active_stroke = false;
@@ -104,10 +105,32 @@ $(document).ready( function() {
         console.log(current_level);
         $(".sub-menu").removeClass("selected");
         /* Afficher et masquer les différents niveaux */
+    	$("#menu-1").remove();
+
+    	new_menu = $("#"+sub).clone(true, true);
+    	new_menu.attr("id", "menu-1");
+    	$("body").prepend(new_menu);
+	    new_menu.css({
+	      top: mouse_pos.pageY - $(".menu").height() / 2,
+	      left: mouse_pos.pageX - $(".menu").width() / 2
+	    });
+	    point1 = getMousePos(c,mouse_pos);
+
         $(new_menu).show();
         $(".sub-menu[level!='"+current_level+"']",new_menu).hide();
       }
     }
   }
+
+  function  getMousePos(canvas, evt) {
+	  var rect = canvas.getBoundingClientRect(), // abs. size of element
+	      scaleX = canvas.width / rect.width,    // relationship bitmap vs. element for X
+	      scaleY = canvas.height / rect.height;  // relationship bitmap vs. element for Y
+
+	  return {
+	    x: (evt.clientX - rect.left) * scaleX,   // scale mouse coordinates after they have
+	    y: (evt.clientY - rect.top) * scaleY     // been adjusted to be relative to element
+	  }
+	}
 
 });
