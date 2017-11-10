@@ -11,6 +11,7 @@ $(document).ready( function() {
   var c=document.getElementById("canvas");
   c.width = $(window).width();
   c.height = $(window).height();
+  var ctx=c.getContext("2d");
 
   active_stroke = false;
   var point1 = [];
@@ -52,8 +53,6 @@ $(document).ready( function() {
       point2.x = e.pageX;
       point2.y = e.pageY;
 
-      var c=document.getElementById("canvas");
-      var ctx=c.getContext("2d");
       ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
       ctx.beginPath();
       ctx.moveTo(point1.x,point1.y);
@@ -89,8 +88,6 @@ $(document).ready( function() {
 
     active_stroke = false;
 
-    var c=document.getElementById("canvas");
-    var ctx=c.getContext("2d");
     ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
     ctx.beginPath();
     ctx.stroke();
@@ -100,9 +97,9 @@ $(document).ready( function() {
   function goToSubMenu() {
     current_level++;
 
-        /* Afficher et masquer les différents niveaux */
-        $(new_menu).show();
-        $(".sub-menu[level!='"+current_level+"']",new_menu).hide();
+    /* Afficher et masquer les différents niveaux */
+    $(new_menu).show();
+    $(".sub-menu[level!='"+current_level+"']",new_menu).hide();
   }
 
 });
