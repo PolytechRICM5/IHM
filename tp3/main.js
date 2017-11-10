@@ -6,6 +6,8 @@ $(document).ready( function() {
   var timeoutid = 0;
   var current_level = 1;
 
+  var new_menu = null;
+
   var c=document.getElementById("canvas");
   c.width = $(window).width();
   c.height = $(window).height();
@@ -20,7 +22,7 @@ $(document).ready( function() {
     //$("#target");
     current_level = 1;
 
-    var new_menu = $(".menu").clone(true, true);
+    new_menu = $(".menu").clone(true, true);
 
     new_menu.attr("id", "menu-1");
 
@@ -29,7 +31,10 @@ $(document).ready( function() {
       top: e.pageY - $(".menu").height() / 2,
       left: e.pageX - $(".menu").width() / 2
     });
-    new_menu.show();
+
+    /* Afficher et masquer les différents niveaux */
+    $(new_menu).show();
+    $(".sub-menu[level!='"+current_level+"']",new_menu).hide();
 
     point1.x = e.pageX;
     point1.y = e.pageY;
@@ -90,7 +95,11 @@ $(document).ready( function() {
   });
 
   function goToSubMenu() {
-    console.log("oui")
+    current_level++;
+
+        /* Afficher et masquer les différents niveaux */
+        $(new_menu).show();
+        $(".sub-menu[level!='"+current_level+"']",new_menu).hide();
   }
 
 });
