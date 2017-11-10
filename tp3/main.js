@@ -82,6 +82,9 @@ $(document).ready( function() {
   });
 
   $(document).mouseup(function(){
+
+    var selected_text = $("#menu-1 li.selected").text();
+    console.log(selected_text);
     $("#menu-1").remove();
 
     active_stroke = false;
