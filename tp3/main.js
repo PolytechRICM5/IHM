@@ -2,13 +2,14 @@ $(document).ready( function() {
 
   //$(".menu").hide();
 
-  var latency = 100;
+  var latency = 100; //Temps avant l'affichage du sous menu
   var timeoutid = 0;
-  var current_level = 1;
-  var mouse_pos;
+  var current_level = 1; //Niveau servant à parcourir les sous-menus
+  var mouse_pos; // Enregister l'evenement souris pour pouvoir l'utiliser dans la fonction appellée dans le setTimeOut
 
-  var new_menu = null;
+  var new_menu = null; // Menu affiché qui sera cloné
 
+  // On récupère le canvas dans lequel on va dessiner
   var c=document.getElementById("canvas");
   c.width = $(window).width();
   c.height = $(window).height();
@@ -21,116 +22,151 @@ $(document).ready( function() {
 
   var selected;
 
+  /*
+	Lorsque l'on clique, on affiche le menu à l'endroit ou le clic est effectué et on commence à tracer.
+  */
   $(document).mousedown(function(e){
-    //$("#target");
+
     current_level = 1;
 
+    // On clone le menu, on lui donne l'id menu-1 et on le place sous la souris
     new_menu = $("#main-menu").clone(true, true);
-
     new_menu.attr("id", "menu-1");
-
     $("body").prepend(new_menu);
     new_menu.css({
-      top: e.pageY - $(".menu").height() / 2,
-      left: e.pageX - $(".menu").width() / 2
+    	top: e.pageY - $(".menu").height() / 2,
+    	left: e.pageX - $(".menu").width() / 2
     });
 
     /* Afficher et masquer les différents niveaux */
     $(new_menu).show();
     $(".sub-menu[level!='"+current_level+"']",new_menu).hide();
 
+    // Recupérer le point cliqué dans le canvas
     point1 = getMousePos(c,e);
-    active_stroke = true;
+    active_stroke = true; // Signaler que l'on commence à tracer
 
-  });
+});
 
+  /*
+	Quand la souris bouge, on trace le trait depuis le point de départ
+	Et on calcule quel est l'option séléctionnée selon l'angle
+	Ensuite, si une option est selectionnée et si elle a un sous-menu
+	alors au bout d'un momeent (latency) ce sous menu s'affiche
+  */
   $(document).mousemove(function(e) {
-    if(active_stroke) {
+  	if(active_stroke) {
 
-      mouse_pos = e;
-      /* Attendre latency ms avant que l'action goToSubMenu soit réalisée */
-      clearTimeout(timeoutid);
-      timeoutid = setTimeout(goToSubMenu, latency);
+  		mouse_pos = e;
 
-      point2 = getMousePos(c,e);
+  		/* Attendre latency ms avant que l'action goToSubMenu soit réalisée */
+  		clearTimeout(timeoutid);
+  		timeoutid = setTimeout(goToSubMenu, latency);
 
-      ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
-      ctx.beginPath();
-      ctx.moveTo(point1.x,point1.y);
-      ctx.lineTo(point2.x, point2.y);
-      ctx.stroke();
-      ctx.closePath();
+  		point2 = getMousePos(c,e);
 
-      dx = point2.x - point1.x;
-      dy = point1.y - point2.y;
-      angle = Math.atan2(dy,dx);
-      pi4 = Math.PI/4;
+  		// Dessiner le trait
+  		ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
+  		ctx.beginPath();
+  		ctx.moveTo(point1.x,point1.y);
+  		ctx.lineTo(point2.x, point2.y);
+  		ctx.stroke();
+  		ctx.closePath();
 
-      $(".sub-menu").removeClass("selected");
-      if(Math.sqrt((dx*dx)+(dy*dy)) > 50) {
+  		// Calculer l'angle
+  		dx = point2.x - point1.x;
+  		dy = point1.y - point2.y;
+  		angle = Math.atan2(dy,dx);
+  		pi4 = Math.PI/4;
+
+  		// Ajouter la classe selected à l'element correspondant à l'angle et au niveau actuel
+  		$(".sub-menu").removeClass("selected");
+  		if(Math.sqrt((dx*dx)+(dy*dy)) > 50) {
         if(angle > 3*pi4 || angle < -3*pi4){ //left
-            $(".sub-left[level='"+current_level+"']").addClass("selected");
+        	$(".sub-left[level='"+current_level+"']").addClass("selected");
         } else if (angle <= 3*pi4 && angle > pi4) { //top
-            $(".sub-top[level='"+current_level+"']").addClass("selected");
+        	$(".sub-top[level='"+current_level+"']").addClass("selected");
         } else if (angle <= pi4 && angle > - pi4) { //right
-            $(".sub-right[level='"+current_level+"']").addClass("selected");
+        	$(".sub-right[level='"+current_level+"']").addClass("selected");
         } else if (angle <= -pi4 && angle > - 3*pi4) { //bottom
-            $(".sub-bottom[level='"+current_level+"']").addClass("selected");
+        	$(".sub-bottom[level='"+current_level+"']").addClass("selected");
         }
-      }
     }
-  });
+}
+});
 
+  /*
+	Au relachement de la souris on récupère l'élément séléctionné,
+	on supprime le menu cloné
+	et on nettoie le canvas
+  */
   $(document).mouseup(function(){
 
-    var selected_text = $("#menu-1 li[level='"+current_level+"'].selected").text();
-    $("#selected_item").text(selected_text);
-    $("#menu-1").remove();
+  	var selected_text = $("#menu-1 li[level='"+current_level+"'].selected").text();
+  	$("#selected_item").text(selected_text); //Afficher dans le HTML le texte de l'element choisit
+  	$("#menu-1").remove();
 
-    active_stroke = false;
+  	active_stroke = false;
 
-    ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
-    ctx.beginPath();
-    ctx.stroke();
-    ctx.closePath();
+  	ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
+  	ctx.beginPath();
+  	ctx.stroke();
+  	ctx.closePath();
   });
 
+  /*
+	Aller dans un sous menu signifie :
+	Verifier si il y a un sous menu correspondant a l'element selectionné
+	Si non on ne fait rien.
+	Si oui, on récupère l'id du sous menu à afficher (attribut sub dans le html)
+	On supprime le menu-1 pour le remplacer par le sous menu cloné (placé au bon endroit)
+  */
   function goToSubMenu() {
-    var curr_selected = $("#menu-1 li[level='"+current_level+"'].selected:first");
-    if(curr_selected.length) {
-      var sub = curr_selected.attr("sub");
-      console.log(sub);
-      if(sub) {
-        current_level++;
-        console.log(current_level);
-        $(".sub-menu").removeClass("selected");
-        /* Afficher et masquer les différents niveaux */
-    	$("#menu-1").remove();
+  	// On récupère l'element selectionné de bon niveau
+  	var curr_selected = $("#menu-1 li[level='"+current_level+"'].selected:first");
+  	// Si il y a un element selectionné
+  	if(curr_selected.length) {
+  		// On regarde s'il a un sous-menu
+  		var sub = curr_selected.attr("sub");
+  		if(sub) {
+  			// On rentre dans le sous menu
+  			current_level++;
+  			$(".sub-menu").removeClass("selected"); //Tout deselectionner
+  			$("#menu-1").remove();
 
-    	new_menu = $("#"+sub).clone(true, true);
-    	new_menu.attr("id", "menu-1");
-    	$("body").prepend(new_menu);
-	    new_menu.css({
-	      top: mouse_pos.pageY - $(".menu").height() / 2,
-	      left: mouse_pos.pageX - $(".menu").width() / 2
-	    });
-	    point1 = getMousePos(c,mouse_pos);
+  			// Cloner le sous-menu
+  			new_menu = $("#"+sub).clone(true, true);
+  			new_menu.attr("id", "menu-1");
+  			$("body").prepend(new_menu);
+  			new_menu.css({
+  				top: mouse_pos.pageY - $(".menu").height() / 2,
+  				left: mouse_pos.pageX - $(".menu").width() / 2
+  			});
+  			
+  			// Recuperer le nouveau point de départ du trait et effacer l'ancien trait
+  			point1 = getMousePos(c,mouse_pos);
+  			ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
 
-        $(new_menu).show();
-        $(".sub-menu[level!='"+current_level+"']",new_menu).hide();
-      }
-    }
+  			// Mettre les bonnes visibilités
+  			$(new_menu).show();
+  			$(".sub-menu[level!='"+current_level+"']",new_menu).hide();
+  		}
+  	}
   }
 
+  /*
+	Cette fonction permet de récupérer les coordonnées du clic souris fournis par evt dans le canvas 
+	Voir : https://stackoverflow.com/questions/17130395/real-mouse-position-in-canvas
+  */
   function  getMousePos(canvas, evt) {
 	  var rect = canvas.getBoundingClientRect(), // abs. size of element
 	      scaleX = canvas.width / rect.width,    // relationship bitmap vs. element for X
 	      scaleY = canvas.height / rect.height;  // relationship bitmap vs. element for Y
 
-	  return {
+	      return {
 	    x: (evt.clientX - rect.left) * scaleX,   // scale mouse coordinates after they have
 	    y: (evt.clientY - rect.top) * scaleY     // been adjusted to be relative to element
-	  }
 	}
+}
 
 });
