@@ -95,11 +95,17 @@ $(document).ready( function() {
   });
 
   function goToSubMenu() {
-    current_level++;
+    var curr_selected = $("#menu-1 li[level='"+current_level+"'].selected:first");
+    if(curr_selected.length) {
+      if(curr_selected.children().length > 0) {
+        current_level++;
+        $(".sub-menu").removeClass("selected");
+        /* Afficher et masquer les différents niveaux */
+        $(new_menu).show();
+        $(".sub-menu[level!='"+current_level+"']",new_menu).hide();
+      }
+    }
 
-    /* Afficher et masquer les différents niveaux */
-    $(new_menu).show();
-    $(".sub-menu[level!='"+current_level+"']",new_menu).hide();
   }
 
 });
