@@ -68,13 +68,13 @@ $(document).ready( function() {
       $(".sub-menu").removeClass("selected");
       if(Math.sqrt((dx*dx)+(dy*dy)) > 50) {
         if(angle > 3*pi4 || angle < -3*pi4){ //left
-            $('.sub-left[level="1"]').addClass("selected");
+            $(".sub-left[level='"+current_level+"']").addClass("selected");
         } else if (angle <= 3*pi4 && angle > pi4) { //top
-            $(".sub-top[level=current_level]").addClass("selected");
+            $(".sub-top[level='"+current_level+"']").addClass("selected");
         } else if (angle <= pi4 && angle > - pi4) { //right
-            $(".sub-right[level=current_level]").addClass("selected");
+            $(".sub-right[level='"+current_level+"']").addClass("selected");
         } else if (angle <= -pi4 && angle > - 3*pi4) { //bottom
-            $(".sub-bottom[level=current_level]").addClass("selected");
+            $(".sub-bottom[level='"+current_level+"']").addClass("selected");
         }
       }
     }
@@ -82,7 +82,7 @@ $(document).ready( function() {
 
   $(document).mouseup(function(){
 
-    var selected_text = $('#menu-1 li[level="1"].selected').val();
+    var selected_text = $('#menu-1 li[level="1"].selected').text();
     console.log(selected_text);
     $("#menu-1").remove();
 
