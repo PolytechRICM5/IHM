@@ -4,6 +4,7 @@ $(document).ready( function() {
 
   var latency = 1000;
   var timeoutid = 0;
+  var current_level = 1;
 
   var c=document.getElementById("canvas");
   c.width = $(window).width();
@@ -17,6 +18,7 @@ $(document).ready( function() {
 
   $(document).mousedown(function(e){
     //$("#target");
+    current_level = 1;
 
     var new_menu = $(".menu").clone(true, true);
 
