@@ -2,6 +2,10 @@ $(document).ready( function() {
 
   //$(".menu").hide();
 
+  var latency = 1000;
+  var timeoutid = 0;
+  var current_level = 1;
+
   var c=document.getElementById("canvas");
   c.width = $(window).width();
   c.height = $(window).height();
@@ -14,6 +18,7 @@ $(document).ready( function() {
 
   $(document).mousedown(function(e){
     //$("#target");
+    current_level = 1;
 
     var new_menu = $(".menu").clone(true, true);
 
@@ -34,6 +39,11 @@ $(document).ready( function() {
 
   $(document).mousemove(function(e) {
     if(active_stroke) {
+
+      /* Attendre latency ms avant que l'action goToSubMenu soit réalisée */
+      clearTimeout(timeoutid);
+      timeoutid = setTimeout(goToSubMenu, latency);
+
       point2.x = e.pageX;
       point2.y = e.pageY;
 
@@ -81,4 +91,9 @@ $(document).ready( function() {
     ctx.stroke();
     ctx.closePath();
   });
+
+  function goToSubMenu() {
+    console.log("oui")
+  }
+
 });
