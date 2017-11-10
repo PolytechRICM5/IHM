@@ -69,6 +69,10 @@ $(document).ready( function() {
       }
     }
 
+    if(directions.length == 1) {
+      directions[1] = directions[0];
+    }
+
     $("#selected_item").text(selectItem(directions));
 
   });
@@ -92,7 +96,7 @@ $(document).ready( function() {
           return sub_menu.text();
         }
       } else {
-        return "error";
+        return "Not an Element";
       }
 
     }
