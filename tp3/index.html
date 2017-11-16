@@ -1,63 +1,63 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <meta charset="utf-8">
-    <title>Marking Menu</title>
-    <link rel="stylesheet" href="design.css">
-  </head>
-  <body>
-  	<h1 class="mytext">Marking Menu - Aubertin & Bonhoure</h1>
-  	<div class="mytext">
-  		Selected item : 
-  		<span id="selected_item">none</span>
-  	</div>
-  	<div class="mytext">
-  		Time taken : 
-  		<span id="time"> </span>
-  	</div>
-    <ul class="menu" id="main-menu">
-      <li class="sub-menu sub-top" level="1" sub="sub-A">A</li>
-      <li class="sub-menu sub-right" level="1" sub="sub-B">B</li>
-      <li class="sub-menu sub-bottom" level="1" sub=sub-C>C</li>
-      <li class="sub-menu sub-left" level="1" sub="sub-D">D</li>
-    </ul>
+<head>
+  <meta charset="utf-8">
+  <title>Marking Menu</title>
+  <link rel="stylesheet" href="design.css">
+</head>
+<body>
+  <h1 class="mytext">Marking Menu - Aubertin & Bonhoure</h1>
+  <div class="mytext">
+    Selected item :
+    <span id="selected_item">none</span>
+  </div>
+  <div class="mytext">
+    Time taken :
+    <span id="time"> </span>
+  </div>
+  <ul class="menu" id="main-menu">
+    <li class="sub-menu sub-top" level="1" sub="sub-A">A</li>
+    <li class="sub-menu sub-right" level="1" sub="sub-B">B</li>
+    <li class="sub-menu sub-bottom" level="1" sub=sub-C>C</li>
+    <li class="sub-menu sub-left" level="1" sub="sub-D">D</li>
+  </ul>
 
-    <ul class="menu" id="sub-A">
-    	<li class="sub-menu sub-top" level="2">A1</li>
-	    <li class="sub-menu sub-left" level="2">A2</li>
-	    <li class="sub-menu sub-right" level="2" sub="sub-A3">A3</li>
-	</ul>
+  <ul class="menu" id="sub-A">
+    <li class="sub-menu sub-top" level="2">A1</li>
+    <li class="sub-menu sub-left" level="2">A2</li>
+    <li class="sub-menu sub-right" level="2" sub="sub-A3">A3</li>
+  </ul>
 
-    <ul class="menu" id="sub-A3">
-	    <li class="sub-menu sub-right" level="3">A3-1</li>
-    	<li class="sub-menu sub-bottom" level="3">A3-2</li>
-	    <li class="sub-menu sub-left" level="3">A3-3</li>
-	</ul>
+  <ul class="menu" id="sub-A3">
+    <li class="sub-menu sub-right" level="3">A3-1</li>
+    <li class="sub-menu sub-bottom" level="3">A3-2</li>
+    <li class="sub-menu sub-left" level="3">A3-3</li>
+  </ul>
 
-	<ul class="menu" id="sub-B">
-    	<li class="sub-menu sub-top" level="2">B1</li>
-	    <li class="sub-menu sub-right" level="2">B2</li>
-	    <li class="sub-menu sub-bottom" level="2">B3</li>
-	    <li class="sub-menu sub-left" level="2">B4</li>
-	</ul>
+  <ul class="menu" id="sub-B">
+    <li class="sub-menu sub-top" level="2">B1</li>
+    <li class="sub-menu sub-right" level="2">B2</li>
+    <li class="sub-menu sub-bottom" level="2">B3</li>
+    <li class="sub-menu sub-left" level="2">B4</li>
+  </ul>
 
-	<ul class="menu" id="sub-C">
-    	<li class="sub-menu sub-top" level="2">C1</li>
-	    <li class="sub-menu sub-right" level="2">C2</li>
-	    <li class="sub-menu sub-bottom" level="2">C3</li>
-	    <li class="sub-menu sub-left" level="2">C4</li>
-	</ul>
+  <ul class="menu" id="sub-C">
+    <li class="sub-menu sub-top" level="2">C1</li>
+    <li class="sub-menu sub-right" level="2">C2</li>
+    <li class="sub-menu sub-bottom" level="2">C3</li>
+    <li class="sub-menu sub-left" level="2">C4</li>
+  </ul>
 
-	<ul class="menu" id="sub-D">
-    	<li class="sub-menu sub-top" level="2">D1</li>
-	    <li class="sub-menu sub-left" level="2">D2</li>
-	    <li class="sub-menu sub-bottom" level="2">D3</li>
-	</ul>
+  <ul class="menu" id="sub-D">
+    <li class="sub-menu sub-top" level="2">D1</li>
+    <li class="sub-menu sub-left" level="2">D2</li>
+    <li class="sub-menu sub-bottom" level="2">D3</li>
+  </ul>
 
-    <canvas id="canvas"></canvas>
-  </body>
+  <canvas id="canvas"></canvas>
+</body>
 
-  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
-  <script src="main.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+<script src="main.js"></script>
 
 </html>
