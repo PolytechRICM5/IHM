@@ -1,14 +1,23 @@
 $(document).ready( function() {
 
-  //$(".menu").hide();
+  var mouse_pos; // Enregister l'evenement souris pour pouvoir l'utiliser dans la fonction appellée dans le setTimeOut
+  var start;
 
   var latency = 100; //Temps avant l'affichage du sous menu
-  var latency_mode = 300; //Temps avant le passage en mode expert
   var timeoutid = 0;
   var current_level = 1; //Niveau servant à parcourir les sous-menus
-  var mouse_pos; // Enregister l'evenement souris pour pouvoir l'utiliser dans la fonction appellée dans le setTimeOut
-
   var new_menu = null; // Menu affiché qui sera cloné
+  active_stroke = false;
+  var point1 = [];
+  var point2 = [];
+
+  // FOR EXPERT MODE
+  var timeoutid_mode = 0;
+  var latency_mode = 300; //Temps avant le passage en mode expert
+  var expert_mode;
+  var stroke = [];
+  var isActive = false;
+  var step = 2;
 
   // On récupère le canvas dans lequel on va dessiner
   var c=document.getElementById("canvas");
@@ -16,52 +25,30 @@ $(document).ready( function() {
   c.height = $(window).height();
   var ctx=c.getContext("2d");
 
-  active_stroke = false;
-  var point1 = [];
-  var point2 = [];
-
-  // FOR EXPERT MODE
-  var expert_mode = true;
-
-  var stroke = [];
-  var isActive = false;
-  var step = 2;
-
   /*
 	Lorsque l'on clique, on affiche le menu à l'endroit ou le clic est effectué et on commence à tracer.
   */
   $(document).mousedown(function(e){
 	expert_mode = true;
 	mouse_pos = e;
+	start = new Date();
 
-	isActive = true;
-    stroke = [];
-    updateStroke(e);
+	if(expert_mode) 
+	{
+		isActive = true;
+	    stroke = [];
+	    updateStroke(e);
 
-    ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
-    ctx.beginPath();
-    ctx.moveTo(stroke[0].x,stroke[0].y);
-/*
+	    ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
+	    ctx.beginPath();
+	    ctx.moveTo(stroke[0].x,stroke[0].y);
+	    timeoutid_mode = setTimeout(openMenu,latency_mode);
+	}
+	
+	/*
 	if(!expert_mode)
 	{
-		current_level = 1;
-
-	    // On clone le menu, on lui donne l'id menu-1 et on le place sous la souris
-	    new_menu = $("#main-menu").clone(true, true);
-	    new_menu.attr("id", "menu-1");
-	    $("body").prepend(new_menu);
-	    new_menu.css({
-	    	top: e.pageY - $(".menu").height() / 2,
-	    	left: e.pageX - $(".menu").width() / 2
-	    });
-
-	    // Afficher et masquer les différents niveaux
-	    $(new_menu).show();
-	    $(".sub-menu[level!='"+current_level+"']",new_menu).hide();
-
-	    // Recupérer le point cliqué dans le canvas
-	    point1 = getMousePos(c,e);
-	    active_stroke = true; // Signaler que l'on commence à tracer
+		openMenu()
 	}
 	*/
 });
@@ -73,11 +60,17 @@ $(document).ready( function() {
 	alors au bout d'un momeent (latency) ce sous menu s'affiche
   */
   $(document).mousemove(function(e) {
+  	clearTimeout(timeoutid_mode);
   	if(expert_mode && isActive)
   	{
+  		/*
   		console.log("coucou");
 	  	clearTimeout(timeoutid);
 	  	timeoutid = setTimeout(openMenu, latency_mode);
+	  	*/
+	    updateStroke(e);
+	    ctx.lineTo(stroke[stroke.length-1].x,stroke[stroke.length-1].y);
+	    ctx.stroke();
   	}
 
 
@@ -127,6 +120,51 @@ $(document).ready( function() {
 	et on nettoie le canvas
   */
   $(document).mouseup(function(){
+  	if(expert_mode) 
+  	{
+		ctx.closePath();
+
+	    isActive = false;
+	    var directions = [];
+
+	    var prev_point = stroke[0];
+	    for (var i = step-1; i < stroke.length; i+=step) {
+	      curr_point = stroke[i];
+
+	      dx = curr_point.x - prev_point.x;
+	      dy = prev_point.y - curr_point.y;
+	      angle = Math.atan2(dy,dx);
+	      pi4 = Math.PI/4;
+
+	      var dir = null;
+
+	      if(Math.sqrt((dx*dx)+(dy*dy)) > 10) {
+
+	        if(angle > 3*pi4 || angle < -3*pi4){ //left
+	          dir = "left";
+	        } else if (angle <= 3*pi4 && angle > pi4) { //top
+	          dir = "top";
+	        } else if (angle <= pi4 && angle > - pi4) { //right
+	          dir = "right";
+	        } else if (angle <= -pi4 && angle > - 3*pi4) { //bottom
+	          dir = "bottom";
+	        }
+
+	        if(directions[directions.length-1] != dir) {
+	          directions[directions.length] = dir;
+	        }
+	        prev_point = curr_point;
+	      }
+	    }
+
+	    if(directions.length == 1) {
+	      directions[1] = directions[0];
+	    }
+
+	    $("#selected_item").text(selectItem(directions));
+	    ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
+  	}
+
   	if(!expert_mode)
   	{
   		var selected_text = $("#menu-1 li[level='"+current_level+"'].selected").text();
@@ -140,6 +178,8 @@ $(document).ready( function() {
 	  	ctx.stroke();
 	  	ctx.closePath();
 	}
+	var end = new Date();
+	$("#time").text(end-start+"ms");
   });
 
   /*
@@ -200,7 +240,27 @@ $(document).ready( function() {
 	function updateStroke(e) {
 	    var len = stroke.length;
 	    stroke[len] = getMousePos(c,e);
-	  }
+	}
+
+	function selectItem(directions) {
+		var curr_menu = $("#main-menu");
+
+		for(var i = 0; i < directions.length; i++) {
+			var sub_menu = $(".sub-"+directions[i], curr_menu);
+			if(sub_menu.length > 0) {
+				var sub_id = sub_menu.attr("sub");
+				if(sub_id){
+					curr_menu = $("#"+sub_id);
+				} else {
+					return sub_menu.text();
+				}
+			} else {
+				return "Not an Element";
+			}
+
+		}
+
+	}
 
 	function openMenu() {
 		expert_mode = false;
