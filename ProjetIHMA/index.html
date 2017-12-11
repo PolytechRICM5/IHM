@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Bubble Menu</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+<script src="menu.js" charset="utf-8"></script>
+<body>
+
+<canvas id="canvas"></canvas>
+  <nav id="menu">
+    <ul>
+      <li class="has-sub" son="files">Files</li>
+      <li class="has-sub" son="edit">Edit</li>
+      <li>About</li>
+    </ul>
+  </nav>
+
+  <div class="sub" name="files">
+    <ul>
+      <li>New</li>
+      <li>Save</li>
+      <li>Save as</li>
+    </ul>
+  </div>
+
+  <div class="sub" name="edit">
+    <ul>
+      <li>Previous</li>
+      <li>Next</li>
+      <li class="has-sub" son="style">Style</li>
+    </ul>
+  </div>
+
+  <div class="sub" name="style">
+    <ul>
+      <li>Bold</li>
+      <li>Italic</li>
+      <li>Underline</li>
+      <hr>
+      <li>Smaller</li>
+      <li>Bigger</li>
+      <hr>
+      <li class="has-sub" son="level">
+        Level
+      </li>
+    </ul>
+  </div>
+
+  <div class="sub" name="level">
+    <ul>
+      <li>Title</li>
+      <li>Subtitle</li>
+      <li>Text</li>
+    </ul>
+  </div>
+
+
+</body>
+</html>
