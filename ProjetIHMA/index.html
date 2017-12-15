@@ -8,55 +8,48 @@
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
 <script src="menu.js" charset="utf-8"></script>
 <body>
-
-<canvas id="canvas"></canvas>
-  <nav id="menu">
-    <ul>
-      <li class="has-sub" son="files">Files</li>
-      <li class="has-sub" son="edit">Edit</li>
-      <li>About</li>
-    </ul>
-  </nav>
-
-  <div class="sub" name="files">
-    <ul>
-      <li>New</li>
-      <li>Save</li>
-      <li>Save as</li>
-    </ul>
-  </div>
-
-  <div class="sub" name="edit">
-    <ul>
-      <li>Previous</li>
-      <li>Next</li>
-      <li class="has-sub" son="style">Style</li>
-    </ul>
-  </div>
-
-  <div class="sub" name="style">
-    <ul>
-      <li>Bold</li>
-      <li>Italic</li>
-      <li>Underline</li>
-      <hr>
-      <li>Smaller</li>
-      <li>Bigger</li>
-      <hr>
-      <li class="has-sub" son="level">
-        Level
-      </li>
-    </ul>
-  </div>
-
-  <div class="sub" name="level">
-    <ul>
-      <li>Title</li>
-      <li>Subtitle</li>
-      <li>Text</li>
-    </ul>
-  </div>
-
-
+  <ul class="main-navigation">
+    <li><a href="#">Files</a>
+      <ul>
+        <li><a href="#" class="fav">New</a></li>
+        <li><a href="#">Open</a></li>
+        <li><a href="#" class="fav">Save</a></li>
+        <li><a href="#">Save As</a></li>
+      </ul>
+    </li>
+    <li><a href="#">Edit</a>
+      <ul>
+        <li><a href="#" class="fav">Undo</a></li>
+        <li><a href="#">Redo</a></li>
+        <li><a href="#">Copy</a></li>
+        <li><a href="#" class="fav">Paste</a></li>
+      </ul>
+    </li>
+    <li><a href="#">Format</a>
+      <ul>
+        <li><a href="#" class="fav">Style</a>
+          <ul>
+            <li><a href="#">Bold</a></li>
+            <li><a href="#" class="fav">Italic</a></li>
+            <li><a href="#">Underline</a></li>
+            <hr>
+            <li><a href="#">Smaller</a></li>
+            <li><a href="#">Bigger</a></li>
+            <hr>
+            <li><a href="#" class="fav">Level</a>
+              <ul>
+                <li><a href="#">Title 1</a></li>
+                <li><a href="#" class="fav">Title 2</a></li>
+                <li><a href="#">Subtitle</a></li>
+              </ul>
+            </li>
+          </ul>
+        </li>
+        <li><a href="#">Save style</a></li>
+        <li><a href="#">Save style as</a></li>
+      </ul>
+    </li>
+    <li><a href="#">About</a></li>
+  </ul>
 </body>
 </html>

@@ -1,49 +1,69 @@
+/* https://www.cssscript.com/create-a-multi-level-drop-down-menu-with-pure-css/ */
+
 body {
   margin: 0px;
   height: 100%;
   font-family: sans-serif;
 }
 
-canvas {
-  width: 100%;
-  height: 100%;
+ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  background: #a5a5a5;
 }
 
-nav#menu {
-  position: absolute;
-  margin: 0px;
-  top: 0;
-  left: 0;
-  right: 0;
-}
-
-nav#menu ul, div.sub ul {
-  background: silver;
-  padding: 0px;
-  margin: 0px;
-  list-style-type: none;
-}
-
-nav#menu ul li {
-  padding: 20px;
-  display: inline-block;
-}
-
-nav#menu ul li:hover {
-  background: gray;
-}
-
-div.sub ul {
-  width: 200px;
-}
-
-div.sub ul li {
+ul li {
   display: block;
-  padding: 10px;
-  box-sizing: border-box;
-  border-left: 50px solid gray;
+  position: relative;
+  float: left;
+  background: #a5a5a5;
 }
 
-li.has-sub {
-  background: blue;
+li ul { display: none; }
+
+ul li a {
+  display: block;
+  padding: 1em;
+  text-decoration: none;
+  white-space: nowrap;
+  color: #fff;
+}
+
+ul li a:hover { background: #2c3e50; }
+
+
+li.open > ul {
+  display: block;
+  position: absolute;
+  min-width: 200px;
+}
+
+li.open li { float: none; }
+
+li.open a { background: #a5a5a5; }
+
+li.open li a:hover { background: #2c3e50; }
+
+.main-navigation li ul li { border-top: 0; }
+
+ul ul ul {
+  left: 100%;
+  top: 0;
+}
+
+ul:before,
+ul:after {
+  content: " "; /* 1 */
+  display: table; /* 2 */
+}
+
+ul:after { clear: both; }
+
+a.fav {
+  background: #aa5cdb !important;
+}
+
+ul {
+  opacity: 0.8;
 }

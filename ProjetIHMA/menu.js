@@ -2,39 +2,62 @@ $(document).ready(function() {
 
   var mouse_pos = {};
   var current_menu = {};
+  var selected_item;
 
-  $("div.sub").hide();
-  // On récupère le canvas dans lequel on va dessiner
-  var c=document.getElementById("canvas");
-  c.width = $(window).width();
-  c.height = $(window).height();
-  var ctx=c.getContext("2d");
+  var STATES = {
+    IDLE : 1,
+    MENU_OPEN : 2,
+    NO_BUBBLE : 3,
+    BUBBLE : 4,
+    OUT_MENU : 5
+  };
 
-  current_menu = $("nav#menu ul");
+  var state = STATES.IDLE;
 
-  $(document).mousemove(function(e) {
-    mouse_pos.x = e.clientX;
-    mouse_pos.y = e.clientY;
-
+  /* Affichage de sous-menu */
+  $(".main-navigation>li").mousedown(function(evt){
+    switch (state) {
+      case STATES.IDLE:
+        $(this).addClass("open");
+        state = STATES.MENU_OPEN;
+        break;
+      default:
+    }
   });
 
-  function updateRow() {
+  $(document).mousemove(function(evt){
+    switch (state) {
+      case STATES.MENU_OPEN:
+        if(evt.target)
+        break;
+      default:
 
-    current_menu.each(function(index) {
-      if(closest == undefined) {
-        closest = {};
-        closest.x = $(this).offset().left;
-        closest.y = $(this).offset().top;
-      } else {
-      }
-    });
+    }
+  });
 
-    ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
-    ctx.beginPath();
-    ctx.moveTo(mouse_pos.x,mouse_pos.y);
-    ctx.lineTo(closest.x, closest.y);
-    ctx.stroke();
-    ctx.closePath();
-  }
+  $(document).mouseup(function(evt){
+    switch (state) {
+      case STATES.OUT_MENU:
+      case STATES.MENU_OPEN:
+        $("li").removeClass("open");
+        state = STATES.IDLE;
+        break;
+      case STATES.NO_BUBBLE:
+        console.log(evt.target);
+        $("li").removeClass("open");
+        state = STATES.IDLE;
+        break;
+      case STATES.BUBBLE:
+        selectBubble(evt);
+        $("li").removeClass("open");
+        break;
+      default:
+        $("li").removeClass("open");
+    }
+  });
+
+  $(document).on('mouseover mousedown', 'a, img', function() {
+    return false;
+  });
 
 });
