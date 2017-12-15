@@ -65,5 +65,13 @@ a.fav {
 }
 
 ul {
-  opacity: 0.8;
+  opacity: 0.9;
+}
+
+.bubble {
+  position: absolute;
+  background: #381451;
+  width: 200px;
+  height: 200px;
+  border-radius: 200px;
 }

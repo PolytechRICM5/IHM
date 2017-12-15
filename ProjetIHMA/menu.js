@@ -14,8 +14,18 @@ $(document).ready(function() {
 
   var state = STATES.IDLE;
 
+  function distance(a,b) {
+    console.log(a.height())
+    ax = a.offset().left + a.width() / 2;
+    ay = a.offset().top + (a.height() / 2);
+    return Math.sqrt(
+      Math.pow((ax - b.pageX), 2)
+      + Math.pow((ay - b.pageY), 2)
+    );
+  }
+
   /* Affichage de sous-menu */
-  $(".main-navigation>li").mousedown(function(evt){
+  $(".main-navigation > li").mousedown(function(evt){
     switch (state) {
       case STATES.IDLE:
         $(this).addClass("open");
@@ -28,11 +38,30 @@ $(document).ready(function() {
   $(document).mousemove(function(evt){
     switch (state) {
       case STATES.MENU_OPEN:
-        if(evt.target)
+        state = STATES.BUBBLE;
+        break;
+      case STATES.BUBBLE:
+        dist = 10000;
+        $(".open>ul .fav").each(function() {
+          curr = distance($(this),evt);
+          if(curr < dist) dist = curr;
+        })
+        $(".bubble").css({
+          width: dist,
+          height: dist,
+          radius: dist
+        })
         break;
       default:
 
     }
+
+    var bubble = $(".bubble");
+
+    $(".bubble").css({
+      left: evt.pageX - bubble.width()/2,
+      top: evt.pageY - bubble.height()/2
+    });
   });
 
   $(document).mouseup(function(evt){
