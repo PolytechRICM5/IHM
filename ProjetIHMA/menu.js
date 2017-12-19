@@ -76,7 +76,7 @@ $(document).ready(function() {
           closest = $(evt.target);
           dist = 5;
         } else {
-          $(".open>ul li a.fav").each(function() {
+          $(".open>ul>li>a.fav").each(function() {
             $(this).removeClass("hovered");
             curr = distance($(this),evt);
             if(curr < dist) {
