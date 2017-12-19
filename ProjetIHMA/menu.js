@@ -15,13 +15,42 @@ $(document).ready(function() {
   var state = STATES.IDLE;
 
   function distance(a,b) {
-    console.log(a.outerHeight());
     ax = a.offset().left + a.outerWidth() / 2;
     ay = a.offset().top + (a.outerHeight() / 2);
     return Math.sqrt(
       Math.pow((ax - b.pageX), 2)
       + Math.pow((ay - b.pageY), 2)
     );
+  }
+
+  function computeBubbleSize(element, evt) {
+    var dist = 0;
+    x = Math.min(
+      Math.abs(evt.pageX - (element.offset().left + element.outerWidth())),
+      Math.abs(evt.pageX - element.offset().left)
+    );
+    y = Math.min(
+      Math.abs(evt.pageY - (element.offset().top + element.outerHeight())),
+      Math.abs(evt.pageY - element.offset().top)
+    );
+    if(
+      evt.pageX >= element.offset().left
+      && evt.pageX <= element.offset().left + element.outerWidth()
+    ) {
+      dist = y
+    }
+    else if(
+      evt.pageY >= element.offset().top
+      && evt.pageY <= element.offset().top + element.outerHeight()
+    ) {
+      dist = x
+    } else {
+      dist = Math.sqrt(Math.pow(x,2) + Math.pow(y,2));
+      //dist = distance(element, evt);
+    }
+    /*
+    */
+    return dist + 5;
   }
 
   /* Affichage de sous-menu */
@@ -45,7 +74,7 @@ $(document).ready(function() {
         var closest = undefined;
         if($(evt.target).hasClass('fav')) {
           closest = $(evt.target);
-          dist = 0;
+          dist = 5;
         } else {
           $(".open>ul li a.fav").each(function() {
             $(this).removeClass("hovered");
@@ -55,8 +84,10 @@ $(document).ready(function() {
               closest = $(this);
             }
           })
+          dist = computeBubbleSize(closest, evt);
         }
         $(closest).addClass("hovered");
+        console.log(dist);
         $(".bubble").css({
           'width': dist*2,
           'height': dist*2,

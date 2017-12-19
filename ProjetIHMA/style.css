@@ -47,6 +47,13 @@ li.open li a.hovered { background: #2c3e50; }
 
 .main-navigation li ul li { border-top: 0; }
 
+.main-navigation li ul a img {
+  height: 16px;
+  position: absolute;
+  right: 10px;
+  top: 17px;
+}
+
 ul ul ul {
   left: 100%;
   top: 0;
