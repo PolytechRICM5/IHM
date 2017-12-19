@@ -15,9 +15,9 @@ $(document).ready(function() {
   var state = STATES.IDLE;
 
   function distance(a,b) {
-    console.log(a.height())
-    ax = a.offset().left + a.width() / 2;
-    ay = a.offset().top + (a.height() / 2);
+    console.log(a.outerHeight());
+    ax = a.offset().left + a.outerWidth() / 2;
+    ay = a.offset().top + (a.outerHeight() / 2);
     return Math.sqrt(
       Math.pow((ax - b.pageX), 2)
       + Math.pow((ay - b.pageY), 2)
@@ -42,14 +42,25 @@ $(document).ready(function() {
         break;
       case STATES.BUBBLE:
         dist = 10000;
-        $(".open>ul .fav").each(function() {
-          curr = distance($(this),evt);
-          if(curr < dist) dist = curr;
-        })
+        var closest = undefined;
+        if($(evt.target).hasClass('fav')) {
+          closest = $(evt.target);
+          dist = 0;
+        } else {
+          $(".open>ul li a.fav").each(function() {
+            $(this).removeClass("hovered");
+            curr = distance($(this),evt);
+            if(curr < dist) {
+              dist = curr;
+              closest = $(this);
+            }
+          })
+        }
+        $(closest).addClass("hovered");
         $(".bubble").css({
-          width: dist,
-          height: dist,
-          radius: dist
+          'width': dist*2,
+          'height': dist*2,
+          'border-radius': dist*2
         })
         break;
       default:
@@ -72,7 +83,6 @@ $(document).ready(function() {
         state = STATES.IDLE;
         break;
       case STATES.NO_BUBBLE:
-        console.log(evt.target);
         $("li").removeClass("open");
         state = STATES.IDLE;
         break;
