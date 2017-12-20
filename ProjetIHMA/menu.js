@@ -75,6 +75,7 @@ $(document).ready(function() {
         state = STATES.BUBBLE;
         break;
       case STATES.BUBBLE:
+        $('.hovered ~ ul').parent().addClass('open');
         dist = 10000;
         var closest = undefined;
         if($(evt.target).hasClass('fav')) {
@@ -120,7 +121,7 @@ $(document).ready(function() {
         selectBubble(evt);
         $('.hovered').removeClass('hovered');
       default:
-        state = STATES.IDLE
+        state = STATES.IDLE;
     }
     $("li").removeClass("open");
     $(".bubble").css({
@@ -132,5 +133,6 @@ $(document).ready(function() {
   $(document).on('mouseover mousedown', 'a, img', function() {
     return false;
   });
+
 
 });
