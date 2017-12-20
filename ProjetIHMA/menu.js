@@ -53,6 +53,11 @@ $(document).ready(function() {
     return dist + 5;
   }
 
+  function selectBubble(evt) {
+    res = $(".hovered").text();
+    $('.selection').text(res);
+  }
+
   /* Affichage de sous-menu */
   $(".main-navigation > li").mousedown(function(evt){
     switch (state) {
@@ -87,7 +92,6 @@ $(document).ready(function() {
           dist = computeBubbleSize(closest, evt);
         }
         $(closest).addClass("hovered");
-        console.log(dist);
         $(".bubble").css({
           'width': dist*2,
           'height': dist*2,
@@ -110,20 +114,19 @@ $(document).ready(function() {
     switch (state) {
       case STATES.OUT_MENU:
       case STATES.MENU_OPEN:
-        $("li").removeClass("open");
-        state = STATES.IDLE;
-        break;
       case STATES.NO_BUBBLE:
-        $("li").removeClass("open");
-        state = STATES.IDLE;
         break;
       case STATES.BUBBLE:
         selectBubble(evt);
-        $("li").removeClass("open");
-        break;
+        $('.hovered').removeClass('hovered');
       default:
-        $("li").removeClass("open");
+        state = STATES.IDLE
     }
+    $("li").removeClass("open");
+    $(".bubble").css({
+      width: 0,
+      height: 0
+    })
   });
 
   $(document).on('mouseover mousedown', 'a, img', function() {

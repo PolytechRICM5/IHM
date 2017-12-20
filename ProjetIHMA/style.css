@@ -39,6 +39,11 @@ li.open > ul {
   min-width: 200px;
 }
 
+li.open>ul>li:has(> a.hovered)>ul {
+  display: block;
+  height: 200px;
+}
+
 li.open li { float: none; }
 
 li.open a { background: #a5a5a5; }
@@ -82,7 +87,7 @@ ul {
 .bubble {
   position: absolute;
   background: #381451;
-  width: 200px;
-  height: 200px;
-  border-radius: 200px;
+  width: 0px;
+  height: 0px;
+  border-radius: 0px;
 }
