@@ -74,6 +74,9 @@ $(document).ready(function() {
       case STATES.MENU_OPEN:
         state = STATES.BUBBLE;
         break;
+      case STATES.NO_BUBBLE:
+
+        break;
       case STATES.BUBBLE:
         $('.hovered ~ ul').parent().addClass('open');
         dist = 10000;
@@ -116,14 +119,23 @@ $(document).ready(function() {
       case STATES.OUT_MENU:
       case STATES.MENU_OPEN:
       case STATES.NO_BUBBLE:
+        state = STATES.IDLE;
         break;
       case STATES.BUBBLE:
+        if($(evt.target).parents("ul").length == 0) {
+          $('.hovered').parent('li').removeClass('open');
+          $('.hovered').removeClass('hovered');
+          state = STATES.NO_BUBBLE;
+          break;
+        }
         selectBubble(evt);
+        $("li").removeClass("open");
         $('.hovered').removeClass('hovered');
+        state = STATES.IDLE;
+        break;
       default:
         state = STATES.IDLE;
     }
-    $("li").removeClass("open");
     $(".bubble").css({
       width: 0,
       height: 0
