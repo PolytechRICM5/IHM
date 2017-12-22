@@ -97,6 +97,8 @@ $(document).ready(function() {
           $(".open>ul>li>a.fav").each(function() {
             hvd = $('.hovered');
               if( hvd.offset() && ! (evt.pageX > hvd.offset().top + hvd.width())) {
+                console.log(hvd.offset().top);
+                console.log(evt.pageX);
                 $('.hovered').parent().removeClass('open');
               }
             $(this).removeClass("hovered");
@@ -107,7 +109,6 @@ $(document).ready(function() {
             }
           })
           dist = computeBubbleSize(closest, evt);
-            console.log('coucou1');
         }
         $(closest).addClass("hovered");
         $(".bubble").css({
