@@ -80,7 +80,7 @@ $(document).ready(function() {
           $('.hovered').parent().removeClass('open');
         }
         if( hvd.offset() && (evt.pageX > hvd.offset().left + hvd.width()/2)) {
-          console.log("coucou");
+          console.log("to bubble");
           state = STATES.BUBBLE;
         }
         $('.hovered').removeClass('hovered');
@@ -100,10 +100,17 @@ $(document).ready(function() {
           dist = 5;
         } else {
           $(".open>ul>li>a.fav").each(function() {
-              if( hvd.offset() && ! (evt.pageX > hvd.offset().top + hvd.width())) {
-                console.log(hvd.offset().top);
-                console.log(evt.pageX);
+            hvd = $('.hovered');
+              if( hvd.offset() && ! (evt.pageX > hvd.offset().left + hvd.width())) {
                 $('.hovered').parent().removeClass('open');
+              }
+              if( hvd.offset() && (evt.pageX <= hvd.offset().left + hvd.width()/2)) {
+                console.log('to no bubble');
+                $(".bubble").css({
+                  width: 0,
+                  height: 0
+                })
+                state = STATES.NO_BUBBLE;
               }
             $(this).removeClass("hovered");
             curr = distance($(this),evt);
