@@ -75,7 +75,11 @@ $(document).ready(function() {
         state = STATES.BUBBLE;
         break;
       case STATES.NO_BUBBLE:
-        //$('.hovered').
+        $('.hovered').removeClass('hovered');
+        if($(evt.target).parent('li').length > 0) {
+          $(evt.target).addClass('hovered');
+          $(evt.target).parent('li').addClass('open');
+        }
         break;
       case STATES.BUBBLE:
         $('.hovered ~ ul').parent().addClass('open');
