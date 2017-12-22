@@ -76,14 +76,15 @@ $(document).ready(function() {
         break;
       case STATES.NO_BUBBLE:
         hvd = $('.hovered');
+        $('.hovered').removeClass('hovered');
         if( hvd.offset() && ! (evt.pageX > hvd.offset().left + hvd.width())) {
           $('.hovered').parent().removeClass('open');
         }
         if( hvd.offset() && (evt.pageX > hvd.offset().left + hvd.width()/2)) {
           console.log("to bubble");
           state = STATES.BUBBLE;
+          break;
         }
-        $('.hovered').removeClass('hovered');
         if($(evt.target).parent('li').length > 0) {
           if(!$(evt.target).parent().parent().hasClass("main-navigation")) {
             $(evt.target).addClass('hovered');
