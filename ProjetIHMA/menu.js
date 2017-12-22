@@ -91,8 +91,8 @@ $(document).ready(function() {
         if($(evt.target).parent('li').length > 0) {
           if(!$(evt.target).parent().parent().hasClass("main-navigation")) {
             $(evt.target).addClass('hovered');
+            $(evt.target).parent('li').addClass('open');
           }
-          $(evt.target).parent('li').addClass('open');
         }
         break;
       case STATES.BUBBLE:
