@@ -78,7 +78,8 @@ $(document).ready(function() {
         hvd = $('.hovered');
         $('.hovered').removeClass('hovered');
         if( hvd.offset() && ! (evt.pageX > hvd.offset().left + hvd.width())) {
-          $('.hovered').parent().removeClass('open');
+          console.log('close')
+          hvd.parent().removeClass('open');
         }
         if( hvd.offset() && (evt.pageX > hvd.offset().left + hvd.width()/2)) {
           console.log("to bubble");
@@ -153,12 +154,6 @@ $(document).ready(function() {
         state = STATES.IDLE;
         break;
       case STATES.BUBBLE:
-        if($(evt.target).parents("ul").length == 0) {
-          $('ul li > ul li').removeClass('open');
-          $('.hovered').removeClass('hovered');
-          state = STATES.NO_BUBBLE;
-          break;
-        }
         selectBubble(evt);
           $("li").removeClass("open");
           $('.hovered').removeClass('hovered');
