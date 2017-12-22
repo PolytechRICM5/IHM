@@ -72,11 +72,11 @@ $(document).ready(function() {
   $(document).mousemove(function(evt){
     switch (state) {
       case STATES.MENU_OPEN:
-        state = STATES.NO_BUBBLE;
+        state = STATES.BUBBLE;
         break;
       case STATES.NO_BUBBLE:
       console.log(evt.pageX + " " + evt.pageY);
-      hvd = $('.hovered');
+        hvd = $('.hovered');
         if( hvd.offset() && ! (evt.pageX > hvd.offset().top + hvd.width())) {
           $('.hovered').parent().removeClass('open');
         }
@@ -95,6 +95,10 @@ $(document).ready(function() {
           dist = 5;
         } else {
           $(".open>ul>li>a.fav").each(function() {
+            hvd = $('.hovered');
+              if( hvd.offset() && ! (evt.pageX > hvd.offset().top + hvd.width())) {
+                $('.hovered').parent().removeClass('open');
+              }
             $(this).removeClass("hovered");
             curr = distance($(this),evt);
             if(curr < dist) {
