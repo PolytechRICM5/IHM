@@ -72,9 +72,14 @@ $(document).ready(function() {
   $(document).mousemove(function(evt){
     switch (state) {
       case STATES.MENU_OPEN:
-        state = STATES.BUBBLE;
+        state = STATES.NO_BUBBLE;
         break;
       case STATES.NO_BUBBLE:
+      console.log(evt.pageX + " " + evt.pageY);
+      hvd = $('.hovered');
+        if( hvd.offset() && ! (evt.pageX > hvd.offset().top + hvd.width())) {
+          $('.hovered').parent().removeClass('open');
+        }
         $('.hovered').removeClass('hovered');
         if($(evt.target).parent('li').length > 0) {
           $(evt.target).addClass('hovered');
@@ -98,6 +103,7 @@ $(document).ready(function() {
             }
           })
           dist = computeBubbleSize(closest, evt);
+            console.log('coucou1');
         }
         $(closest).addClass("hovered");
         $(".bubble").css({
@@ -123,6 +129,9 @@ $(document).ready(function() {
       case STATES.OUT_MENU:
       case STATES.MENU_OPEN:
       case STATES.NO_BUBBLE:
+        selectBubble(evt);
+        $("li").removeClass("open");
+        $('.hovered').removeClass('hovered');
         state = STATES.IDLE;
         break;
       case STATES.BUBBLE:
@@ -133,11 +142,13 @@ $(document).ready(function() {
           break;
         }
         selectBubble(evt);
-        $("li").removeClass("open");
-        $('.hovered').removeClass('hovered');
-        state = STATES.IDLE;
+          $("li").removeClass("open");
+          $('.hovered').removeClass('hovered');
+          state = STATES.IDLE;
         break;
       default:
+        $("li").removeClass("open");
+        $('.hovered').removeClass('hovered');
         state = STATES.IDLE;
     }
     $(".bubble").css({
