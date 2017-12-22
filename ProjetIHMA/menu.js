@@ -1,15 +1,10 @@
 $(document).ready(function() {
 
-  var mouse_pos = {};
-  var current_menu = {};
-  var selected_item;
-
   var STATES = {
     IDLE : 1,
     MENU_OPEN : 2,
     NO_BUBBLE : 3,
-    BUBBLE : 4,
-    OUT_MENU : 5
+    BUBBLE : 4
   };
 
   var state = STATES.IDLE;
@@ -46,10 +41,7 @@ $(document).ready(function() {
       dist = x
     } else {
       dist = Math.sqrt(Math.pow(x,2) + Math.pow(y,2));
-      //dist = distance(element, evt);
     }
-    /*
-    */
     return dist + 5;
   }
 
@@ -76,38 +68,34 @@ $(document).ready(function() {
         break;
       case STATES.NO_BUBBLE:
         hvd = $('.hovered');
-        $('.hovered').removeClass('hovered');
+        $('.hovered').removeClass('hovered'); // Pour anticiper le changement d'état
         if( hvd.offset() && ! (evt.pageX > hvd.offset().left + hvd.width())) {
-          console.log(hvd.text())
           hvd.parent().removeClass('open');
         }
         if( hvd.offset() && (evt.pageX > hvd.offset().left + hvd.width()/2)) {
-          console.log(hvd.parent('li').children('ul').length);
           if(hvd.parent('li').children('ul').length == 0 || hvd.hasClass("fav")) {
             console.log("to bubble");
             state = STATES.BUBBLE;
             break;
           }
         }
-        if($(evt.target).parent('li').length > 0) {
-          if(!$(evt.target).parent().parent().hasClass("main-navigation")) {
-            $(evt.target).addClass('hovered');
-            $(evt.target).parent('li').addClass('open');
-          }
+        if(!$(evt.target).parent().parent().hasClass("main-navigation")) {
+          $(evt.target).addClass('hovered');
+          $(evt.target).parent('li').addClass('open');
         }
         break;
       case STATES.BUBBLE:
-      hvd = $('.hovered');
-      if( hvd.offset() && (evt.pageX <= hvd.offset().left + hvd.width()/2)) {
-        console.log('to no bubble');
-        $(".bubble").css({
-          width: 0,
-          height: 0
-        })
-        state = STATES.NO_BUBBLE;
-        break;
-      }
-        $('.hovered ~ ul').parent().addClass('open');
+        hvd = $('.hovered');
+        if( hvd.offset() && (evt.pageX <= hvd.offset().left + hvd.width()/2)) {
+          console.log('to no bubble');
+          $(".bubble").css({
+            width: 0,
+            height: 0
+          })
+          state = STATES.NO_BUBBLE;
+          break;
+        }
+        $('.hovered ~ ul').parent().addClass('open'); // Ouvrir un sous-menu
         dist = 10000;
         var closest = undefined;
         if($(evt.target).hasClass('fav')) {
@@ -137,9 +125,7 @@ $(document).ready(function() {
       default:
 
     }
-
     var bubble = $(".bubble");
-
     $(".bubble").css({
       left: evt.pageX - bubble.width()/2,
       top: evt.pageY - bubble.height()/2
@@ -148,21 +134,11 @@ $(document).ready(function() {
 
   $(document).mouseup(function(evt){
     switch (state) {
-      case STATES.OUT_MENU:
       case STATES.MENU_OPEN:
       case STATES.NO_BUBBLE:
-        selectBubble(evt);
-        $("li").removeClass("open");
-        $('.hovered').removeClass('hovered');
-        state = STATES.IDLE;
-        break;
       case STATES.BUBBLE:
-        selectBubble(evt);
-          $("li").removeClass("open");
-          $('.hovered').removeClass('hovered');
-          state = STATES.IDLE;
-        break;
       default:
+        selectBubble(evt);
         $("li").removeClass("open");
         $('.hovered').removeClass('hovered');
         state = STATES.IDLE;
