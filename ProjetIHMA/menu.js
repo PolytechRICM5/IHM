@@ -101,6 +101,7 @@ $(document).ready(function() {
           height: 0
         })
         state = STATES.NO_BUBBLE;
+        break;
       }
         $('.hovered ~ ul').parent().addClass('open');
         dist = 10000;
