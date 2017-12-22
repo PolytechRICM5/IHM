@@ -72,17 +72,22 @@ $(document).ready(function() {
   $(document).mousemove(function(evt){
     switch (state) {
       case STATES.MENU_OPEN:
-        state = STATES.BUBBLE;
+        state = STATES.NO_BUBBLE;
         break;
       case STATES.NO_BUBBLE:
-      console.log(evt.pageX + " " + evt.pageY);
         hvd = $('.hovered');
-        if( hvd.offset() && ! (evt.pageX > hvd.offset().top + hvd.width())) {
+        if( hvd.offset() && ! (evt.pageX > hvd.offset().left + hvd.width())) {
           $('.hovered').parent().removeClass('open');
+        }
+        if( hvd.offset() && (evt.pageX > hvd.offset().left + hvd.width()/2)) {
+          console.log("coucou");
+          state = STATES.BUBBLE;
         }
         $('.hovered').removeClass('hovered');
         if($(evt.target).parent('li').length > 0) {
-          $(evt.target).addClass('hovered');
+          if(!$(evt.target).parent().parent().hasClass("main-navigation")) {
+            $(evt.target).addClass('hovered');
+          }
           $(evt.target).parent('li').addClass('open');
         }
         break;
@@ -95,7 +100,6 @@ $(document).ready(function() {
           dist = 5;
         } else {
           $(".open>ul>li>a.fav").each(function() {
-            hvd = $('.hovered');
               if( hvd.offset() && ! (evt.pageX > hvd.offset().top + hvd.width())) {
                 console.log(hvd.offset().top);
                 console.log(evt.pageX);
